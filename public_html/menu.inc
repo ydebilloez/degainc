@@ -4,6 +4,7 @@
     <li><a href='animaux.php'>Animaux</a></li>
     <li><a href='achats.php'>Achats</a></li>
     <li><a href='ventes.php'>Ventes</a></li>
+    <li><a href='examples/changelog.php'>Changelog</a></li>
     <li><a href='examples/symbols.php'>Symbols</a></li>
     <li><a href='examples/languages.php'>Languages</a></li>
     <li><a href='examples/statuscodes.php'>StatusCodes</a></li>
