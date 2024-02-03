@@ -27,6 +27,12 @@ require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
+$opts['options'] = 'ACVDL';
+$opts['navigation'] = 'BD';
+$opts['display']['sort'] = false;
+$opts['buttons']['L']['down'] = array('-<<','-<','-add','-view','-change','-copy','-delete',
+                                    '->','->>','-goto','-goto_combo');
+
 $opts['tb'] = 'prodcomposition';
 
 // Name of field which is the unique key
@@ -42,7 +48,7 @@ $opts['sort_field'] = array('rowid');
 */
 
 $opts['fdd']['rowid'] = array(
-         'name' => 'Rowid',
+         'name' => 'ID',
        'select' => 'T',
       'options' => 'VDR', // auto increment
        'maxlen' => '10',
@@ -51,26 +57,28 @@ $opts['fdd']['rowid'] = array(
          'sort' => true
 );
 $opts['fdd']['pr_code'] = array(
-         'name' => 'Pr code',
+         'name' => 'Product',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
-  'values' => array(
-    'table'  => 'products',
-    'column' => 'pr_code'
-  ),
+       'values' => array('table'  => 'products',
+                         'column' => 'pr_code',
+                         'description' => array('columns' => array('pr_code', 'pr_name'),
+                                                'divs'    => array (' - '))
+                        ),
          'sort' => true
 );
 $opts['fdd']['in_code'] = array(
-         'name' => 'In code',
+         'name' => 'Ingredient',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
-  'values' => array(
-    'table'  => 'ingredients',
-    'column' => 'in_code'
-  ),
-         'sort' => true
+       'values' => array('table'  => 'ingredients',
+                         'column' => 'in_code',
+                         'description' => array('columns' => array('in_code', 'in_name'),
+                                                'divs'    => array (' - '))
+                        ),
+         'sort' => false
 );
 $opts['fdd']['quantite'] = array(
          'name' => 'Quantite',
