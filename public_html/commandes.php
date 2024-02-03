@@ -27,38 +27,81 @@ require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
-$opts['tb'] = 'animaux';
+$opts['tb'] = 'commandes';
 
 // Name of field which is the unique key
-$opts['key'] = 'an_code';
+$opts['key'] = 'rowid';
 
 // Type of key field (int/real/string/date etc.)
+$opts['key_type'] = 'int';
 // Sorting field(s)
-$opts['sort_field'] = array('an_code');
+$opts['sort_field'] = array('rowid');
 
 /* please refer to lib/phpMyEditInfo.php for additional options
    that can be added in this file
 */
 
-$opts['fdd']['an_code'] = array(
-         'name' => 'An code',
+$opts['fdd']['rowid'] = array(
+         'name' => 'Rowid',
+       'select' => 'T',
+      'options' => 'VDR', // auto increment
+       'maxlen' => '10',
+           'js' => array('required' => true),
+      'default' => '0',
+         'sort' => true
+);
+$opts['fdd']['date_commande'] = array(
+         'name' => 'Date commande',
+       'select' => 'T',
+       'maxlen' => '10',
+           'js' => array('required' => true),
+         'sort' => true
+);
+$opts['fdd']['co_type'] = array(
+         'name' => 'Co type',
+       'select' => 'M',
+       'maxlen' => '5',
+       'values' => array(
+                  "Achat",
+                  "Vente"),
+           'js' => array('required' => true),
+      'default' => 'Achat',
+         'sort' => true
+);
+$opts['fdd']['fo_code'] = array(
+         'name' => 'Fo code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
+  'values' => array(
+    'table'  => 'fournisseurs',
+    'column' => 'fo_code'
+  ),
          'sort' => true
 );
-$opts['fdd']['an_name'] = array(
-         'name' => 'An name',
+$opts['fdd']['pr_code'] = array(
+         'name' => 'Pr code',
        'select' => 'T',
-       'maxlen' => '60',
+       'maxlen' => '8',
            'js' => array('required' => true),
+  'values' => array(
+    'table'  => 'products',
+    'column' => 'pr_code'
+  ),
          'sort' => true
 );
-$opts['fdd']['status_code'] = array(
-         'name' => 'Status code',
+$opts['fdd']['quantite'] = array(
+         'name' => 'Quantite',
+       'select' => 'N',
+       'maxlen' => '10',
+      'default' => '1.00',
+         'sort' => true
+);
+$opts['fdd']['commentaires'] = array(
+         'name' => 'Commentaires',
        'select' => 'T',
-       'maxlen' => '1',
-      'default' => 'C',
+       'maxlen' => '255',
+           'js' => array('required' => true),
          'sort' => true
 );
 

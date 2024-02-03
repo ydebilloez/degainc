@@ -49,14 +49,12 @@ $opts['sort_field'] = array('rowid');
 */
 
 $opts['fdd']['rowid'] = array(
-         'name' => 'ID',
-        '_type' => 'int(10) unsigned',
+         'name' => 'Rowid',
        'select' => 'T',
       'options' => 'VDR', // auto increment
        'maxlen' => '10',
            'js' => array('required' => true),
       'default' => '0',
-         '_key' => 'PRI',
          'sort' => true
 );
 $opts['fdd']['vente_name'] = array(

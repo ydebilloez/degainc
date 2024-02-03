@@ -27,38 +27,32 @@ require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
-$opts['tb'] = 'animaux';
+$opts['tb'] = 'fournisseurs';
 
 // Name of field which is the unique key
-$opts['key'] = 'an_code';
+$opts['key'] = 'fo_code';
 
 // Type of key field (int/real/string/date etc.)
+$opts['key_type'] = 'char';
 // Sorting field(s)
-$opts['sort_field'] = array('an_code');
+$opts['sort_field'] = array('fo_code');
 
 /* please refer to lib/phpMyEditInfo.php for additional options
    that can be added in this file
 */
 
-$opts['fdd']['an_code'] = array(
-         'name' => 'An code',
+$opts['fdd']['fo_code'] = array(
+         'name' => 'Fo code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
          'sort' => true
 );
-$opts['fdd']['an_name'] = array(
-         'name' => 'An name',
+$opts['fdd']['fo_name'] = array(
+         'name' => 'Fo name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),
-         'sort' => true
-);
-$opts['fdd']['status_code'] = array(
-         'name' => 'Status code',
-       'select' => 'T',
-       'maxlen' => '1',
-      'default' => 'C',
          'sort' => true
 );
 
