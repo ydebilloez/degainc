@@ -1,0 +1,11 @@
+phpMyEditSetup.php
+/doc
+/examples
+/images/pme-*
+/lib/.htaccess
+/lib/phpMyEdit*
+/lib/configoptions.md
+/lib/lang
+/lib/extensions
+/js/phpMyEdit.js
+/css/phpMyEdit*
