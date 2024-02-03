@@ -42,14 +42,14 @@ $opts['sort_field'] = array('fo_code');
 */
 
 $opts['fdd']['fo_code'] = array(
-         'name' => 'Fo code',
+         'name' => 'Code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
          'sort' => true
 );
 $opts['fdd']['fo_name'] = array(
-         'name' => 'Fo name',
+         'name' => 'Name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),

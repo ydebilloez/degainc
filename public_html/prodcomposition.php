@@ -53,8 +53,7 @@ $opts['fdd']['rowid'] = array(
       'options' => 'VDR', // auto increment
        'maxlen' => '10',
            'js' => array('required' => true),
-      'default' => '0',
-         'sort' => true
+      'default' => '0'
 );
 $opts['fdd']['pr_code'] = array(
          'name' => 'Product',
@@ -77,15 +76,13 @@ $opts['fdd']['in_code'] = array(
                          'column' => 'in_code',
                          'description' => array('columns' => array('in_code', 'in_name'),
                                                 'divs'    => array (' - '))
-                        ),
-         'sort' => false
+                        )
 );
 $opts['fdd']['quantite'] = array(
          'name' => 'Quantite',
        'select' => 'N',
        'maxlen' => '10',
-      'default' => '1.00',
-         'sort' => true
+      'default' => '1.00'
 );
 
 // possibly initialise page further before going to main function

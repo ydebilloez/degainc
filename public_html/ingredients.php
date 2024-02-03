@@ -42,21 +42,21 @@ $opts['sort_field'] = array('in_code');
 */
 
 $opts['fdd']['in_code'] = array(
-         'name' => 'In code',
+         'name' => 'Code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
          'sort' => true
 );
 $opts['fdd']['in_name'] = array(
-         'name' => 'In name',
+         'name' => 'Name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),
          'sort' => true
 );
 $opts['fdd']['in_unite'] = array(
-         'name' => 'In unite',
+         'name' => 'Unité',
        'select' => 'M',
        'maxlen' => '2',
        'values' => array(
@@ -71,10 +71,11 @@ $opts['fdd']['status_code'] = array(
        'select' => 'T',
        'maxlen' => '1',
       'default' => 'C',
-  'values' => array(
-    'table'  => 'pme_statuscodes',
-    'column' => 'code'
-  ),
+       'values' => array('table'  => 'pme_statuscodes',
+                         'column' => 'code',
+                         'description' => array('columns' => array('code', 'status_name'),
+                                                'divs'    => array (' - '))
+                        ),
          'sort' => true
 );
 

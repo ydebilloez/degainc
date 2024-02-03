@@ -61,10 +61,11 @@ $opts['fdd']['commande_id'] = array(
          'name' => 'Commande ID',
        'select' => 'T',
        'maxlen' => '10',
-  'values' => array(
-    'table'  => 'commandes',
-    'column' => 'rowid'
-  ),
+       'values' => array('table'  => 'commandes',
+                         'column' => 'rowid',
+                         'description' => array('columns' => array('rowid', 'date_commande', 'fo_code'),
+                                                'divs'    => array (' - ', ' - '))
+                        ),
          'sort' => true
 );
 $opts['fdd']['date_achat'] = array(
@@ -77,15 +78,12 @@ $opts['fdd']['date_achat'] = array(
 $opts['fdd']['prix_achat'] = array(
          'name' => 'Prix achat',
        'select' => 'N',
-       'maxlen' => '10',
-         'sort' => true
+       'maxlen' => '10'
 );
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
-       'maxlen' => '255',
-           'js' => array('required' => true),
-         'sort' => true
+       'maxlen' => '255'
 );
 
 // possibly initialise page further before going to main function

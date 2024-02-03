@@ -41,14 +41,14 @@ $opts['sort_field'] = array('an_code');
 */
 
 $opts['fdd']['an_code'] = array(
-         'name' => 'An code',
+         'name' => 'Code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
          'sort' => true
 );
 $opts['fdd']['an_name'] = array(
-         'name' => 'An name',
+         'name' => 'Name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),
@@ -59,6 +59,11 @@ $opts['fdd']['status_code'] = array(
        'select' => 'T',
        'maxlen' => '1',
       'default' => 'C',
+       'values' => array('table'  => 'pme_statuscodes',
+                         'column' => 'code',
+                         'description' => array('columns' => array('code', 'status_name'),
+                                                'divs'    => array (' - '))
+                        ),
          'sort' => true
 );
 

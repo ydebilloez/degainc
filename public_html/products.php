@@ -48,21 +48,21 @@ $opts['sort_field'] = array('pr_code');
 */
 
 $opts['fdd']['pr_code'] = array(
-         'name' => 'Pr code',
+         'name' => 'Code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
          'sort' => true
 );
 $opts['fdd']['pr_name'] = array(
-         'name' => 'Pr name',
+         'name' => 'Name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),
          'sort' => true
 );
 $opts['fdd']['pr_type'] = array(
-         'name' => 'Pr type',
+         'name' => 'Type',
        'select' => 'M',
        'maxlen' => '5',
        'values' => array(
@@ -73,7 +73,7 @@ $opts['fdd']['pr_type'] = array(
          'sort' => true
 );
 $opts['fdd']['pr_unite'] = array(
-         'name' => 'Pr unite',
+         'name' => 'Unité',
        'select' => 'M',
        'maxlen' => '2',
        'values' => array(
@@ -84,14 +84,14 @@ $opts['fdd']['pr_unite'] = array(
          'sort' => true
 );
 $opts['fdd']['pr_prixunite'] = array(
-         'name' => 'Pr prixunite',
+         'name' => 'Prix Unité',
        'select' => 'N',
        'maxlen' => '10',
       'default' => '0.00',
          'sort' => true
 );
 $opts['fdd']['pr_quantite'] = array(
-         'name' => 'Pr quantite',
+         'name' => 'Quantité',
        'select' => 'N',
        'maxlen' => '10',
       'default' => '1.00',
@@ -102,10 +102,11 @@ $opts['fdd']['status_code'] = array(
        'select' => 'T',
        'maxlen' => '1',
       'default' => 'C',
-  'values' => array(
-    'table'  => 'pme_statuscodes',
-    'column' => 'code'
-  ),
+       'values' => array('table'  => 'pme_statuscodes',
+                         'column' => 'code',
+                         'description' => array('columns' => array('code', 'status_name'),
+                                                'divs'    => array (' - '))
+                        ),
          'sort' => true
 );
 

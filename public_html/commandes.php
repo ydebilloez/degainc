@@ -42,7 +42,7 @@ $opts['sort_field'] = array('rowid');
 */
 
 $opts['fdd']['rowid'] = array(
-         'name' => 'Rowid',
+         'name' => 'ID',
        'select' => 'T',
       'options' => 'VDR', // auto increment
        'maxlen' => '10',
@@ -58,51 +58,46 @@ $opts['fdd']['date_commande'] = array(
          'sort' => true
 );
 $opts['fdd']['co_type'] = array(
-         'name' => 'Co type',
+         'name' => 'Transaction',
        'select' => 'M',
        'maxlen' => '5',
        'values' => array(
                   "Achat",
                   "Vente"),
-           'js' => array('required' => true),
-      'default' => 'Achat',
-         'sort' => true
+      'default' => 'Achat'
 );
 $opts['fdd']['fo_code'] = array(
-         'name' => 'Fo code',
+         'name' => 'Fournisseur',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
-  'values' => array(
-    'table'  => 'fournisseurs',
-    'column' => 'fo_code'
-  ),
-         'sort' => true
+       'values' => array('table'  => 'fournisseurs',
+                         'column' => 'fo_code',
+                         'description' => array('columns' => array('fo_code', 'fo_name'),
+                                                'divs'    => array (' - '))
+                        )
 );
 $opts['fdd']['pr_code'] = array(
-         'name' => 'Pr code',
+         'name' => 'Product',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
-  'values' => array(
-    'table'  => 'products',
-    'column' => 'pr_code'
-  ),
-         'sort' => true
+       'values' => array('table'  => 'products',
+                         'column' => 'pr_code',
+                         'description' => array('columns' => array('pr_code', 'pr_name'),
+                                                'divs'    => array (' - '))
+                        )
 );
 $opts['fdd']['quantite'] = array(
-         'name' => 'Quantite',
+         'name' => 'Quantité',
        'select' => 'N',
        'maxlen' => '10',
-      'default' => '1.00',
-         'sort' => true
+      'default' => '1.00'
 );
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
-       'maxlen' => '255',
-           'js' => array('required' => true),
-         'sort' => true
+       'maxlen' => '255'
 );
 
 // possibly initialise page further before going to main function

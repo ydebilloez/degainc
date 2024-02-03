@@ -49,7 +49,7 @@ $opts['sort_field'] = array('rowid');
 */
 
 $opts['fdd']['rowid'] = array(
-         'name' => 'Rowid',
+         'name' => 'ID',
        'select' => 'T',
       'options' => 'VDR', // auto increment
        'maxlen' => '10',
