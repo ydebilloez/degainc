@@ -48,6 +48,8 @@ function retrieveMyEditVersion() {
     <hr class='gradientline' data-caption='Additional functions' />
     <menu class='pme-menu'>
         <li />
+        <li><a href='examples/getstarted-index.php'>System configuration</a></li>
+        <li />
         <li>Reports... to be continued</li>
     </menu>
 </body>
