@@ -36,38 +36,65 @@ $opts['buttons']['L']['down'] = array('-<<','-<','-add','-view','-change','-copy
 $opts['tb'] = 'products';
 
 // Name of field which is the unique key
-$opts['key'] = 'rowid';
+$opts['key'] = 'pr_code';
 
 // Type of key field (int/real/string/date etc.)
-$opts['key_type'] = 'int';
+$opts['key_type'] = 'char';
 // Sorting field(s)
-$opts['sort_field'] = array('rowid');
+$opts['sort_field'] = array('pr_code');
 
 /* please refer to lib/phpMyEditInfo.php for additional options
    that can be added in this file
 */
 
-$opts['fdd']['rowid'] = array(
-         'name' => 'Rowid',
-       'select' => 'T',
-      'options' => 'VDR', // auto increment
-       'maxlen' => '10',
-           'js' => array('required' => true),
-      'default' => '0',
-         'sort' => true
-);
 $opts['fdd']['pr_code'] = array(
-         'name' => 'Pr code',
+         'name' => 'Code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
          'sort' => true
 );
 $opts['fdd']['pr_name'] = array(
-         'name' => 'Pr name',
+         'name' => 'Name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),
+         'sort' => true
+);
+$opts['fdd']['pr_type'] = array(
+         'name' => 'Type',
+       'select' => 'M',
+       'maxlen' => '5',
+       'values' => array(
+                  "Achat",
+                  "Vente"),
+           'js' => array('required' => true),
+      'default' => 'Achat',
+         'sort' => true
+);
+$opts['fdd']['pr_unite'] = array(
+         'name' => 'Unité',
+       'select' => 'M',
+       'maxlen' => '2',
+       'values' => array(
+                  "KG",
+                  "L",
+                  ""),
+           'js' => array('required' => true),
+         'sort' => true
+);
+$opts['fdd']['pr_prixunite'] = array(
+         'name' => 'Prix Unité',
+       'select' => 'N',
+       'maxlen' => '10',
+      'default' => '0.00',
+         'sort' => true
+);
+$opts['fdd']['pr_quantite'] = array(
+         'name' => 'Quantité',
+       'select' => 'N',
+       'maxlen' => '10',
+      'default' => '1.00',
          'sort' => true
 );
 $opts['fdd']['status_code'] = array(

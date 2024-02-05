@@ -27,14 +27,7 @@ require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
-// custom settings
-$opts['options'] = 'ACVD';
-$opts['navigation'] = 'DB';
-$opts['display']['sort'] = false;
-$opts['buttons']['L']['down'] = array('-<<','-<','-add','-view','-change','-copy','-delete',
-                                    '->','->>','-goto','-goto_combo');
-
-$opts['tb'] = 'ventes';
+$opts['tb'] = 'commandes';
 
 // Name of field which is the unique key
 $opts['key'] = 'rowid';
@@ -57,12 +50,54 @@ $opts['fdd']['rowid'] = array(
       'default' => '0',
          'sort' => true
 );
-$opts['fdd']['vente_name'] = array(
-         'name' => 'Vente name',
+$opts['fdd']['date_commande'] = array(
+         'name' => 'Date commande',
        'select' => 'T',
-       'maxlen' => '60',
+       'maxlen' => '10',
            'js' => array('required' => true),
          'sort' => true
+);
+$opts['fdd']['co_type'] = array(
+         'name' => 'Transaction',
+       'select' => 'M',
+       'maxlen' => '5',
+       'values' => array(
+                  "Achat",
+                  "Vente"),
+      'default' => 'Achat'
+);
+$opts['fdd']['fo_code'] = array(
+         'name' => 'Fournisseur',
+       'select' => 'T',
+       'maxlen' => '8',
+           'js' => array('required' => true),
+       'values' => array('table'  => 'fournisseurs',
+                         'column' => 'fo_code',
+                         'description' => array('columns' => array('fo_code', 'fo_name'),
+                                                'divs'    => array (' - '))
+                        )
+);
+$opts['fdd']['pr_code'] = array(
+         'name' => 'Product',
+       'select' => 'T',
+       'maxlen' => '8',
+           'js' => array('required' => true),
+       'values' => array('table'  => 'products',
+                         'column' => 'pr_code',
+                         'description' => array('columns' => array('pr_code', 'pr_name'),
+                                                'divs'    => array (' - '))
+                        )
+);
+$opts['fdd']['quantite'] = array(
+         'name' => 'Quantité',
+       'select' => 'N',
+       'maxlen' => '10',
+      'default' => '1.00'
+);
+$opts['fdd']['commentaires'] = array(
+         'name' => 'Commentaires',
+       'select' => 'T',
+       'maxlen' => '255'
 );
 
 // possibly initialise page further before going to main function

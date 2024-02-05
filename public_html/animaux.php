@@ -30,27 +30,25 @@ require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 $opts['tb'] = 'animaux';
 
 // Name of field which is the unique key
-$opts['key'] = 'pr_code';
+$opts['key'] = 'an_code';
 
 // Type of key field (int/real/string/date etc.)
 // Sorting field(s)
-$opts['sort_field'] = array('pr_code');
+$opts['sort_field'] = array('an_code');
 
 /* please refer to lib/phpMyEditInfo.php for additional options
    that can be added in this file
 */
 
-$opts['fdd']['pr_code'] = array(
-         'name' => 'Pr code',
-        '_type' => 'char(8)',
+$opts['fdd']['an_code'] = array(
+         'name' => 'Code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
          'sort' => true
 );
-$opts['fdd']['pr_name'] = array(
-         'name' => 'Pr name',
-        '_type' => 'varchar(60)',
+$opts['fdd']['an_name'] = array(
+         'name' => 'Name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),
@@ -58,11 +56,14 @@ $opts['fdd']['pr_name'] = array(
 );
 $opts['fdd']['status_code'] = array(
          'name' => 'Status code',
-        '_type' => 'char(1)',
        'select' => 'T',
        'maxlen' => '1',
-        '_null' => 'YES',
       'default' => 'C',
+       'values' => array('table'  => 'pme_statuscodes',
+                         'column' => 'code',
+                         'description' => array('columns' => array('code', 'status_name'),
+                                                'divs'    => array (' - '))
+                        ),
          'sort' => true
 );
 

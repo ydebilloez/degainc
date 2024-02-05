@@ -42,78 +42,65 @@ $opts['sort_field'] = array('rowid');
 */
 
 $opts['fdd']['rowid'] = array(
-         'name' => 'Rowid',
-        '_type' => 'int(10) unsigned',
+         'name' => 'ID',
        'select' => 'T',
       'options' => 'VDR', // auto increment
-     '_options' => 'auto_increment',
        'maxlen' => '10',
            'js' => array('required' => true),
       'default' => '0',
-         '_key' => 'PRI',
          'sort' => true
 );
 $opts['fdd']['co_name'] = array(
-         'name' => 'Co name',
-        '_type' => 'varchar(60)',
+         'name' => 'Name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),
          'sort' => true
 );
 $opts['fdd']['co_name_en'] = array(
-         'name' => 'Co name en',
-        '_type' => 'varchar(60)',
+         'name' => 'Name (English)',
        'select' => 'T',
        'maxlen' => '60',
-        '_null' => 'YES',
          'sort' => true
 );
 $opts['fdd']['co_code'] = array(
-         'name' => 'Co code',
-        '_type' => 'char(2)',
+         'name' => 'Code',
        'select' => 'T',
        'maxlen' => '2',
            'js' => array('required' => true),
-         '_key' => 'UNI',
          'sort' => true
 );
 $opts['fdd']['co_alpha3code'] = array(
-         'name' => 'Co alpha3code',
-        '_type' => 'char(3)',
+         'name' => 'Alpha code',
        'select' => 'T',
+      'options' => 'VDR',
        'maxlen' => '3',
-        '_null' => 'YES',
          'sort' => true
 );
 $opts['fdd']['co_numcode'] = array(
-         'name' => 'Co numcode',
-        '_type' => 'char(3)',
+         'name' => 'Numeric code',
        'select' => 'T',
+      'options' => 'VDR',
        'maxlen' => '3',
-        '_null' => 'YES',
          'sort' => true
 );
 $opts['fdd']['co_telprefix'] = array(
-         'name' => 'Co telprefix',
-        '_type' => 'char(6)',
+         'name' => 'Tel prefix',
        'select' => 'T',
        'maxlen' => '6',
-        '_null' => 'YES',
          'sort' => true
 );
 $opts['fdd']['co_internetsuffix'] = array(
-         'name' => 'Co internetsuffix',
-        '_type' => 'varchar(30)',
+         'name' => 'Internet domain',
        'select' => 'T',
        'maxlen' => '30',
-        '_null' => 'YES',
          'sort' => true
 );
 $opts['fdd']['co_flagimg'] = array(
-         'name' => 'Co flagimg',
+         'name' => 'Flag',
         '_type' => 'blob',
        'select' => 'T',
+      'options' => 'VDR',
      'textarea' => array('rows' => 5, 'cols' => 80),
         '_null' => 'YES',
          'sort' => true
@@ -122,37 +109,37 @@ $opts['fdd']['co_imgfromsky'] = array(
          'name' => 'Co imgfromsky',
         '_type' => 'longblob',
        'select' => 'T',
+      'options' => 'VDR',
      'textarea' => array('rows' => 5, 'cols' => 80),
         '_null' => 'YES',
          'sort' => true
 );
 $opts['fdd']['co_introduction'] = array(
-         'name' => 'Co introduction',
-        '_type' => 'text',
+         'name' => 'Introduction',
        'select' => 'T',
      'textarea' => array('rows' => 5, 'cols' => 80),
-        '_null' => 'YES',
          'sort' => true
 );
 $opts['fdd']['co_centre'] = array(
-         'name' => 'Co centre',
+         'name' => 'Centre point',
         '_type' => 'point',
        'select' => 'T',
+      'options' => 'VDR',
        'maxlen' => '0',
         '_null' => 'YES',
          'sort' => true
 );
 $opts['fdd']['co_area'] = array(
-         'name' => 'Co area',
+         'name' => 'Area',
         '_type' => 'polygon',
        'select' => 'T',
+      'options' => 'VDR',
        'maxlen' => '0',
         '_null' => 'YES',
          'sort' => true
 );
 $opts['fdd']['creation_date'] = array(
          'name' => 'Creation date',
-        '_type' => 'timestamp',
        'select' => 'T',
       'options' => 'AVCPDR', // filled automatically (MySQL feature)
        'maxlen' => '26',

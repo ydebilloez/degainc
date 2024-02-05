@@ -27,14 +27,13 @@ require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
-// custom settings
-$opts['options'] = 'ACVD';
-$opts['navigation'] = 'DB';
+$opts['options'] = 'ACVDL';
+$opts['navigation'] = 'BD';
 $opts['display']['sort'] = false;
 $opts['buttons']['L']['down'] = array('-<<','-<','-add','-view','-change','-copy','-delete',
                                     '->','->>','-goto','-goto_combo');
 
-$opts['tb'] = 'ventes';
+$opts['tb'] = 'prodcomposition';
 
 // Name of field which is the unique key
 $opts['key'] = 'rowid';
@@ -54,15 +53,36 @@ $opts['fdd']['rowid'] = array(
       'options' => 'VDR', // auto increment
        'maxlen' => '10',
            'js' => array('required' => true),
-      'default' => '0',
+      'default' => '0'
+);
+$opts['fdd']['pr_code'] = array(
+         'name' => 'Product',
+       'select' => 'T',
+       'maxlen' => '8',
+           'js' => array('required' => true),
+       'values' => array('table'  => 'products',
+                         'column' => 'pr_code',
+                         'description' => array('columns' => array('pr_code', 'pr_name'),
+                                                'divs'    => array (' - '))
+                        ),
          'sort' => true
 );
-$opts['fdd']['vente_name'] = array(
-         'name' => 'Vente name',
+$opts['fdd']['in_code'] = array(
+         'name' => 'Ingredient',
        'select' => 'T',
-       'maxlen' => '60',
+       'maxlen' => '8',
            'js' => array('required' => true),
-         'sort' => true
+       'values' => array('table'  => 'ingredients',
+                         'column' => 'in_code',
+                         'description' => array('columns' => array('in_code', 'in_name'),
+                                                'divs'    => array (' - '))
+                        )
+);
+$opts['fdd']['quantite'] = array(
+         'name' => 'Quantite',
+       'select' => 'N',
+       'maxlen' => '10',
+      'default' => '1.00'
 );
 
 // possibly initialise page further before going to main function

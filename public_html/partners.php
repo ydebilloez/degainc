@@ -27,41 +27,69 @@ require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
-// custom settings
-$opts['options'] = 'ACVD';
-$opts['navigation'] = 'DB';
-$opts['display']['sort'] = false;
-$opts['buttons']['L']['down'] = array('-<<','-<','-add','-view','-change','-copy','-delete',
-                                    '->','->>','-goto','-goto_combo');
-
-$opts['tb'] = 'ventes';
+$opts['tb'] = 'partners';
 
 // Name of field which is the unique key
-$opts['key'] = 'rowid';
+$opts['key'] = 'pa_code';
 
 // Type of key field (int/real/string/date etc.)
-$opts['key_type'] = 'int';
+$opts['key_type'] = 'char';
 // Sorting field(s)
-$opts['sort_field'] = array('rowid');
+$opts['sort_field'] = array('pa_code');
 
 /* please refer to lib/phpMyEditInfo.php for additional options
    that can be added in this file
 */
 
-$opts['fdd']['rowid'] = array(
-         'name' => 'ID',
+$opts['fdd']['pa_code'] = array(
+         'name' => 'Code',
        'select' => 'T',
-      'options' => 'VDR', // auto increment
-       'maxlen' => '10',
+       'maxlen' => '8',
            'js' => array('required' => true),
-      'default' => '0',
-         'sort' => true
+         'help' => 'Cannot be changed once used in system'
 );
-$opts['fdd']['vente_name'] = array(
-         'name' => 'Vente name',
+$opts['fdd']['pa_name'] = array(
+         'name' => 'Name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),
+         'sort' => true
+);
+$opts['fdd']['pa_phone'] = array(
+         'name' => 'Phone',
+       'select' => 'T',
+       'maxlen' => '60'
+);
+$opts['fdd']['pa_mail'] = array(
+         'name' => 'e-mail',
+       'select' => 'T',
+       'maxlen' => '60'
+);
+$opts['fdd']['pa_type'] = array(
+         'name' => 'Type',
+       'select' => 'C',
+       'maxlen' => '11',
+       'values' => array(
+                  "Fournisseur",
+                  "Client"),
+           'js' => array('required' => true)
+);
+$opts['fdd']['comments'] = array(
+         'name' => 'Comments',
+       'select' => 'T',
+       'maxlen' => '255'
+);
+$opts['fdd']['status_code'] = array(
+         'name' => 'Status code',
+       'select' => 'T',
+      'options' => 'VDR',
+       'maxlen' => '1',
+      'default' => 'C',
+       'values' => array('table'  => 'pme_statuscodes',
+                         'column' => 'code',
+                         'description' => array('columns' => array('code', 'status_name'),
+                                                'divs'    => array (' - '))
+                        ),
          'sort' => true
 );
 
@@ -85,6 +113,7 @@ echo '
     } catch(err) {
         console.log(err);
     }
+    PME_js_setPageTitle("Partenaires");
 </script>
 ';
 

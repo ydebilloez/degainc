@@ -51,27 +51,27 @@ $opts['fdd']['rowid'] = array(
          'sort' => true
 );
 $opts['fdd']['tr_name'] = array(
-         'name' => 'Tr name',
+         'name' => 'Name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),
          'sort' => true
 );
 $opts['fdd']['tr_name_en'] = array(
-         'name' => 'Tr name en',
+         'name' => 'Name (English)',
        'select' => 'T',
        'maxlen' => '60',
          'sort' => true
 );
 $opts['fdd']['tr_code'] = array(
-         'name' => 'Tr code',
+         'name' => 'Code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
          'sort' => true
 );
 $opts['fdd']['tr_country_code'] = array(
-         'name' => 'Tr country code',
+         'name' => 'Country',
        'select' => 'T',
        'maxlen' => '2',
        'values' => array('table'  => 'countries',
@@ -82,7 +82,7 @@ $opts['fdd']['tr_country_code'] = array(
          'sort' => true
 );
 $opts['fdd']['tr_rate'] = array(
-         'name' => 'Tr rate',
+         'name' => 'Rate',
        'select' => 'N',
        'maxlen' => '5',
            'js' => array('required' => true),
