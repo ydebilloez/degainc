@@ -66,8 +66,8 @@ $opts['fdd']['co_type'] = array(
                   "Vente"),
       'default' => 'Achat'
 );
-$opts['fdd']['fo_code'] = array(
-         'name' => 'Fournisseur',
+$opts['fdd']['pa_code'] = array(
+         'name' => 'Pa code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
@@ -76,6 +76,11 @@ $opts['fdd']['fo_code'] = array(
                          'description' => array('columns' => array('fo_code', 'fo_name'),
                                                 'divs'    => array (' - '))
                         )
+  'values' => array(
+    'table'  => 'partenaires',
+    'column' => 'pa_code'
+  ),
+         'sort' => true
 );
 $opts['fdd']['pr_code'] = array(
          'name' => 'Product',

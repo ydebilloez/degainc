@@ -27,55 +27,87 @@ require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
-$opts['tb'] = 'fournisseurs';
+$opts['tb'] = 'partners';
+
+// custom settings overwriting general edit defaults
+$opts['display']['sort'] = false;
+
+// filter on subset
+$opts['filters'] = "FIND_IN_SET('Fournisseur', `pa_type`)";
 
 // Name of field which is the unique key
-$opts['key'] = 'fo_code';
+$opts['key'] = 'pa_code';
 
 // Type of key field (int/real/string/date etc.)
 $opts['key_type'] = 'char';
 // Sorting field(s)
-$opts['sort_field'] = array('fo_code');
+$opts['sort_field'] = array('pa_code');
 
 /* please refer to lib/phpMyEditInfo.php for additional options
    that can be added in this file
 */
 
-$opts['fdd']['fo_code'] = array(
+$opts['fdd']['pa_code'] = array(
          'name' => 'Code',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
+         'help' => 'Cannot be changed once used in system',
          'sort' => true
 );
-$opts['fdd']['fo_name'] = array(
+$opts['fdd']['pa_name'] = array(
          'name' => 'Name',
        'select' => 'T',
        'maxlen' => '60',
            'js' => array('required' => true),
          'sort' => true
 );
+$opts['fdd']['pa_phone'] = array(
+         'name' => 'Phone',
+       'select' => 'T',
+       'maxlen' => '60'
+);
+$opts['fdd']['pa_mail'] = array(
+         'name' => 'e-mail',
+       'select' => 'T',
+       'maxlen' => '60'
+);
+$opts['fdd']['pa_type'] = array(
+         'name' => 'Type',
+       'select' => 'C',
+      'options' => 'AVCPD',
+       'maxlen' => '11',
+      'default' => 'Fournisseur',
+       'values' => array(
+                  "Fournisseur",
+                  "Client")
+);
+$opts['fdd']['commentaires'] = array(
+         'name' => 'Commentaires',
+       'select' => 'T',
+     'textarea' => array('rows' => 5, 'cols' => 80)
+);
+$opts['fdd']['status_code'] = array(
+         'name' => 'Status code',
+       'select' => 'T',
+      'options' => 'VDR',
+         'help' => 'valid codes: see table pme_statuscodes',
+       'maxlen' => '1',
+      'default' => 'C',
+       'values' => array('table'  => 'pme_statuscodes',
+                         'column' => 'code',
+                         'description' => array('columns' => array('code', 'status_name'),
+                                                'divs'    => array (' - '))
+                        )
+);
 
 // possibly initialise page further before going to main function
 
 if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
-// now copy php variables over to js variables
-// protect sensitive variables so they cannot be read
-$cleanopts = $opts;
-unset($cleanopts['hn']); unset($cleanopts['pt']);
-unset($cleanopts['un']); unset($cleanopts['pw']);
-
 echo '
 <script>
-    var phpOpts = ' . json_encode($cleanopts) . ';
-    try {
-        if (typeof PME_js_init === \'function\') {
-            PME_js_init(phpOpts);
-        }
-    } catch(err) {
-        console.log(err);
-    }
+    PME_js_setPageTitle("Fournisseurs");
 </script>
 ';
 

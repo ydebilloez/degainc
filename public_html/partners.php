@@ -32,9 +32,6 @@ $opts['tb'] = 'partners';
 // custom settings overwriting general edit defaults
 $opts['display']['sort'] = false;
 
-// filter on subset
-$opts['filters'] = "FIND_IN_SET('Client', `pa_type`)";
-
 // Name of field which is the unique key
 $opts['key'] = 'pa_code';
 
@@ -50,14 +47,15 @@ $opts['sort_field'] = array('pa_code');
 $opts['fdd']['pa_code'] = array(
          'name' => 'Code',
        'select' => 'T',
+         'help' => 'The partner code, cannot be changed once used',
        'maxlen' => '8',
            'js' => array('required' => true),
-         'help' => 'Cannot be changed once used in system',
          'sort' => true
 );
 $opts['fdd']['pa_name'] = array(
          'name' => 'Name',
        'select' => 'T',
+         'help' => 'The partner name',
        'maxlen' => '60',
            'js' => array('required' => true),
          'sort' => true
@@ -65,19 +63,19 @@ $opts['fdd']['pa_name'] = array(
 $opts['fdd']['pa_phone'] = array(
          'name' => 'Phone',
        'select' => 'T',
+         'help' => 'The partner phone',
        'maxlen' => '60'
 );
 $opts['fdd']['pa_mail'] = array(
          'name' => 'e-mail',
        'select' => 'T',
+         'help' => 'The partner mail',
        'maxlen' => '60'
 );
 $opts['fdd']['pa_type'] = array(
          'name' => 'Type',
        'select' => 'C',
-      'options' => 'AVCPD',
        'maxlen' => '11',
-      'default' => 'Client',
        'values' => array(
                   "Fournisseur",
                   "Client")
@@ -107,7 +105,7 @@ if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
 echo '
 <script>
-    PME_js_setPageTitle("Clients");
+    PME_js_setPageTitle("Partenaires");
 </script>
 ';
 

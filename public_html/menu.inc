@@ -3,6 +3,7 @@
     <li><a href='ingredients.php'>Ingredients</a></li>
     <li><a href='products.php'>Produits</a></li>
     <li><a href='prodcomposition.php'>Fabrication</a></li>
+    <li><a href='partners.php'>Partenaires</a></li>
     <li><a href='clients.php'>Clients</a></li>
     <li><a href='fournisseurs.php'>Fournisseurs</a></li>
     <li><a href='commandes.php'>Commandes</a></li>

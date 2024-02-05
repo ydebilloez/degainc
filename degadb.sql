@@ -9,8 +9,7 @@ USE `i5576int_dega`;
 DROP TABLE IF EXISTS `achats`;
 DROP TABLE IF EXISTS `ventes`;
 DROP TABLE IF EXISTS `commandes`;
-DROP TABLE IF EXISTS `fournisseurs`;
-DROP TABLE IF EXISTS `clients`;
+DROP TABLE IF EXISTS `partners`;
 DROP TABLE IF EXISTS `prodcomposition`;
 DROP TABLE IF EXISTS `ingredients`;
 DROP TABLE IF EXISTS `products`;
@@ -108,32 +107,78 @@ ALTER TABLE `prodcomposition`
     ADD CONSTRAINT `FK_prodcomposition_in_code`
     FOREIGN KEY (`in_code`) REFERENCES `ingredients`(`in_code`);
 
-/* table fournisseurs */
+/* table partners */
 
-CREATE TABLE `fournisseurs` (
-    `fo_code` CHAR(8) NOT NULL COMMENT 'the fournisseur code',
-    `fo_name` VARCHAR(60) NOT NULL COMMENT 'the fournisseur name'
+DROP TRIGGER IF EXISTS `partners_before_insert`;
+DROP TRIGGER IF EXISTS `partners_before_update`;
+
+CREATE TABLE `partners` (
+    `pa_code` CHAR(8) NOT NULL COMMENT 'The partner code, cannot be changed once used',
+    `pa_name` VARCHAR(60) NOT NULL COMMENT 'The partner name',
+    `pa_phone` VARCHAR(60) COMMENT 'The partner phone',
+    `pa_mail` VARCHAR(60) COMMENT 'The partner mail',
+    `pa_type` SET('Fournisseur', 'Client'),
+    `commentaires` TEXT,
+    `status_code` CHAR(1) DEFAULT 'C' COMMENT 'valid codes: see table pme_statuscodes'
 );
 
-ALTER TABLE `fournisseurs`
-    ADD UNIQUE KEY `ukey_fo_code` (`fo_code`);
+ALTER TABLE `partners`
+    ADD UNIQUE KEY `ukey_pa_code` (`pa_code`);
 
-/* table clients */
+ALTER TABLE `partners`
+    ADD CONSTRAINT `FK_partenaires_statuscodes`
+    FOREIGN KEY (`status_code`) REFERENCES `pme_statuscodes`(`code`);
 
-CREATE TABLE `clients` (
-    `cl_code` CHAR(8) NOT NULL COMMENT 'the fournisseur code',
-    `cl_name` VARCHAR(60) NOT NULL COMMENT 'the fournisseur name'
-);
+DELIMITER $$
 
-ALTER TABLE `clients`
-    ADD UNIQUE KEY `ukey_cl_code` (`cl_code`);
+CREATE TRIGGER `partners_before_insert` BEFORE INSERT
+    ON `partners` FOR EACH ROW
+BEGIN
+    IF (NEW.`status_code` IS NULL) OR (NEW.`status_code` = '') THEN
+        SET NEW.`status_code` = 'C';
+    END IF;
+    IF (NEW.`pa_code` IS NULL) OR (NEW.`pa_code` = '') THEN
+        SET NEW.`pa_code` = LEFT(NEW.`pa_name`,8);
+    END IF;
+    SET NEW.`pa_code` = UPPER(NEW.`pa_code`);
+    IF (NEW.`pa_type` IS NULL) OR (NEW.`pa_type` = '') THEN
+        SET NEW.`pa_type` = 'Client';
+    END IF;
+END
+$$
+
+CREATE TRIGGER `partners_before_update` BEFORE UPDATE
+    ON `partners` FOR EACH ROW
+BEGIN
+    IF NEW.`status_code` = OLD.`status_code` THEN
+        /* set status code only if it has not been changed by the
+           statement
+        */
+        SET NEW.`status_code` = 'M';
+    ELSEIF (NEW.`status_code` IS NULL) OR (NEW.`status_code` = '') THEN 
+        SET NEW.`status_code` = 'M';
+    END IF;
+    IF (NEW.`pa_code` IS NULL) OR (NEW.`pa_code` = '') THEN
+        /* cannot empty partner code */
+        SET NEW.`pa_code` = OLD.`pa_code`;
+    END IF;
+    IF NEW.`pa_code` != OLD.`pa_code` THEN
+        SET NEW.`pa_code` = UPPER(NEW.`pa_code`);
+    END IF;
+    IF (NEW.`pa_type` IS NULL) OR (NEW.`pa_type` = '') THEN
+        SET NEW.`pa_type` = 'Client';
+    END IF;
+END
+$$
+
+DELIMITER ;
 
 /* table commandes */
 
 CREATE TABLE `commandes` (
     `date_commande` DATE NOT NULL,
     `co_type` ENUM('Achat', 'Vente') NOT NULL DEFAULT 'Achat',
-    `fo_code` CHAR(8) NOT NULL,
+    `pa_code` CHAR(8) NOT NULL,
     `pr_code` CHAR(8) NOT NULL,
     `quantite` DECIMAL(10,2) DEFAULT 1,
     `commentaires` VARCHAR(255) NOT NULL
@@ -143,8 +188,8 @@ ALTER TABLE `commandes`
     ADD `rowid` INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY FIRST;
 
 ALTER TABLE `commandes`
-    ADD CONSTRAINT `FK_commandes_fo_code`
-    FOREIGN KEY (`fo_code`) REFERENCES `fournisseurs`(`fo_code`);
+    ADD CONSTRAINT `FK_commandes_pa_code`
+    FOREIGN KEY (`pa_code`) REFERENCES `partners`(`pa_code`);
 
 ALTER TABLE `commandes`
     ADD CONSTRAINT `FK_commandes_pr_code`
