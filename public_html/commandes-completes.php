@@ -20,7 +20,7 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  *            phpMyEditSetup.php script: 5.7.6
  *                     generated script: 5.7.6
  *
- * This file was manually updated.
+ * This file was NOT manually updated.
  */
 
 require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
@@ -30,10 +30,10 @@ require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 $opts['tb'] = 'commandes';
 
 // custom settings overwriting general edit defaults
-$opts['display']['sort'] = false;
+$opts['options'] = 'VF';
 
 // filter on subset
-$opts['filters'] = "`co_type` = 'Vente' AND `date_paiement` IS NULL";
+$opts['filters'] = "`date_paiement` IS NOT NULL";
 
 // Name of field which is the unique key
 $opts['key'] = 'rowid';
@@ -55,34 +55,37 @@ $opts['fdd']['rowid'] = array(
        'maxlen' => '10',
          'sort' => true
 );
-$opts['fdd']['date_commande'] = array(
-         'name' => 'Date Vente',
-       'select' => 'T',
-      'default' => date('Y-m-d'),
-       'maxlen' => '10',
-         'sort' => true
-);
 $opts['fdd']['co_type'] = array(
-         'name' => 'Operation',
+         'name' => 'Type',
        'select' => 'R',
-      'options' => 'AVCPDR',
        'maxlen' => '5',
        'values' => array(
                   "Achat",
                   "Vente"),
-      'default' => 'Vente',
            'js' => array('required' => true)
 );
+$opts['fdd']['date_commande'] = array(
+         'name' => 'Date commande',
+       'select' => 'T',
+       'maxlen' => '10',
+         'sort' => true
+);
+$opts['fdd']['date_paiement'] = array(
+         'name' => 'Date paiement',
+       'select' => 'T',
+      'options' => 'VDLR',
+       'maxlen' => '10',
+         'sort' => true
+);
 $opts['fdd']['pa_code'] = array(
-         'name' => 'Client',
+         'name' => 'Partner',
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
        'values' => array('table'  => 'partners',
                          'column' => 'pa_code',
                          'description' => array('columns' => array('pa_code', 'pa_name', 'pa_type'),
-                                                'divs'    => array (' - ',' (',')')),
-                         'filters' => 'pa_type = "Client"'
+                                                'divs'    => array (' - ',' (',')'))
                         ),
          'sort' => true
 );
@@ -100,11 +103,9 @@ if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
 echo '
 <script>
-    PME_js_setPageTitle("Ventes en cours");
+    PME_js_setPageTitle("Commandes complétées");
 </script>
 ';
-
-// Now important call to phpMyEdit
 
 new phpMyEdit($opts);
 

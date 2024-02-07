@@ -20,29 +20,29 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  *            phpMyEditSetup.php script: 5.7.6
  *                     generated script: 5.7.6
  *
- * This file was NOT manually updated.
+ * This file was manually updated.
  */
 
 require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
-// custom settings
-$opts['options'] = 'ACVD';
-$opts['navigation'] = 'DB';
-$opts['display']['sort'] = false;
-$opts['buttons']['L']['down'] = array('-<<','-<','-add','-view','-change','-copy','-delete',
-                                    '->','->>','-goto','-goto_combo');
+$opts['tb'] = 'commandes';
 
-$opts['tb'] = 'achats';
+// custom settings overwriting general edit defaults
+$opts['display']['sort'] = false;
+
+// filter on subset
+$opts['filters'] = "`co_type` = 'Achat' AND `date_paiement` IS NULL";
 
 // Name of field which is the unique key
 $opts['key'] = 'rowid';
 
 // Type of key field (int/real/string/date etc.)
 $opts['key_type'] = 'int';
+
 // Sorting field(s)
-$opts['sort_field'] = array('rowid');
+$opts['sort_field'] = array('date_commande');
 
 /* please refer to lib/phpMyEditInfo.php for additional options
    that can be added in this file
@@ -53,63 +53,56 @@ $opts['fdd']['rowid'] = array(
        'select' => 'T',
       'options' => 'VDR', // auto increment
        'maxlen' => '10',
-           'js' => array('required' => true),
-      'default' => '0',
          'sort' => true
 );
-$opts['fdd']['commande_id'] = array(
-         'name' => 'Commande ID',
+$opts['fdd']['date_commande'] = array(
+         'name' => 'Date Achat',
        'select' => 'T',
+      'default' => date('Y-m-d'),
        'maxlen' => '10',
-       'values' => array('table'  => 'commandes',
-                         'column' => 'rowid',
-                         'description' => array('columns' => array('rowid', 'date_commande', 'fo_code'),
-                                                'divs'    => array (' - ', ' - '))
+         'sort' => true
+);
+$opts['fdd']['co_type'] = array(
+         'name' => 'Operation',
+       'select' => 'R',
+      'options' => 'AVCPDR',
+       'maxlen' => '5',
+       'values' => array(
+                  "Achat",
+                  "Vente"),
+      'default' => 'Achat',
+           'js' => array('required' => true)
+);
+$opts['fdd']['pa_code'] = array(
+         'name' => 'Fournisseur',
+       'select' => 'T',
+       'maxlen' => '8',
+           'js' => array('required' => true),
+       'values' => array('table'  => 'partners',
+                         'column' => 'pa_code',
+                         'description' => array('columns' => array('pa_code', 'pa_name', 'pa_type'),
+                                                'divs'    => array (' - ',' (',')')),
+                         'filters' => 'pa_type = "Fournisseur"'
                         ),
          'sort' => true
-);
-$opts['fdd']['date_achat'] = array(
-         'name' => 'Date achat',
-       'select' => 'T',
-       'maxlen' => '10',
-           'js' => array('required' => true),
-         'sort' => true
-);
-$opts['fdd']['prix_achat'] = array(
-         'name' => 'Prix achat',
-       'select' => 'N',
-       'maxlen' => '10'
 );
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
-       'maxlen' => '255'
+     'textarea' => array('rows' => 5, 'cols' => 80)
 );
 
 // possibly initialise page further before going to main function
 
 if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
-// now copy php variables over to js variables
-// protect sensitive variables so they cannot be read
-$cleanopts = $opts;
-unset($cleanopts['hn']); unset($cleanopts['pt']);
-unset($cleanopts['un']); unset($cleanopts['pw']);
+// Now important call to phpMyEdit
 
 echo '
 <script>
-    var phpOpts = ' . json_encode($cleanopts) . ';
-    try {
-        if (typeof PME_js_init === \'function\') {
-            PME_js_init(phpOpts);
-        }
-    } catch(err) {
-        console.log(err);
-    }
+    PME_js_setPageTitle("Achats en cours");
 </script>
 ';
-
-// Now important call to phpMyEdit
 
 new phpMyEdit($opts);
 

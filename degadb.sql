@@ -6,8 +6,8 @@ USE `i5576int_dega`;
 
 /* erase tables */
 
-DROP TABLE IF EXISTS `achats`;
-DROP TABLE IF EXISTS `ventes`;
+DROP TABLE IF EXISTS `operations`;
+DROP TABLE IF EXISTS `comdetails`;
 DROP TABLE IF EXISTS `commandes`;
 DROP TABLE IF EXISTS `partners`;
 DROP TABLE IF EXISTS `prodcomposition`;
@@ -175,13 +175,30 @@ DELIMITER ;
 
 /* table commandes */
 
+DROP TRIGGER IF EXISTS `commandes_before_insert`;
+DROP TRIGGER IF EXISTS `commandes_before_update`;
+
+DELETE FROM `pme_symbols`
+WHERE `sy_name` = 'OPER_TYPE'
+    OR (`sy_name` = 'SYMBOL' AND `sy_code` = 'OPER_TYPE');
+
+INSERT INTO `pme_symbols`
+    (`sy_name`, `sy_code`, `sy_value`)
+VALUES
+    ('SYMBOL', 'OPER_TYPE', 'types of operations, foreign key');
+
+INSERT INTO `pme_symbols`
+    (`sy_name`, `sy_code`, `sy_value`)
+VALUES
+    ('OPER_TYPE', 'Achat', 'Achat'),
+    ('OPER_TYPE', 'Vente', 'Vente');
+
 CREATE TABLE `commandes` (
     `date_commande` DATE NOT NULL,
-    `co_type` ENUM('Achat', 'Vente') NOT NULL DEFAULT 'Achat',
+    `co_type` ENUM('Achat', 'Vente') NOT NULL,
     `pa_code` CHAR(8) NOT NULL,
-    `pr_code` CHAR(8) NOT NULL,
-    `quantite` DECIMAL(10,2) DEFAULT 1,
-    `commentaires` VARCHAR(255) NOT NULL
+    `date_paiement` DATE ,
+    `commentaires` TEXT
 );
 
 ALTER TABLE `commandes`
@@ -191,37 +208,72 @@ ALTER TABLE `commandes`
     ADD CONSTRAINT `FK_commandes_pa_code`
     FOREIGN KEY (`pa_code`) REFERENCES `partners`(`pa_code`);
 
-ALTER TABLE `commandes`
-    ADD CONSTRAINT `FK_commandes_pr_code`
+/*
+DELIMITER $$
+
+CREATE TRIGGER `commandes_before_insert` BEFORE INSERT
+    ON `commandes` FOR EACH ROW
+BEGIN
+    IF (NEW.`date_commande` IS NULL) OR (NEW.`date_commande` = '') THEN
+        SET NEW.`date_commande` = CURDATE();
+    END IF;
+END
+$$
+
+CREATE TRIGGER `commandes_before_update` BEFORE UPDATE
+    ON `commandes` FOR EACH ROW
+BEGIN
+    IF (NEW.`date_commande` IS NULL) OR (NEW.`date_commande` = '') THEN
+        SET NEW.`date_commande` = OLD.`date_commande`;
+    END IF;
+END
+$$
+
+DELIMITER ;
+
+*/
+
+/* table comdetails */
+
+CREATE TABLE `comdetails` (
+    `commande_id` INT(10),
+    `pr_code` CHAR(8) NOT NULL,
+    `quantite` DECIMAL(10,2) DEFAULT 1,
+    `commentaires` TEXT NOT NULL
+);
+
+ALTER TABLE `comdetails`
+    ADD `rowid` INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY FIRST;
+
+ALTER TABLE `comdetails`
+    MODIFY `commande_id` INT(10) UNSIGNED;
+
+ALTER TABLE `comdetails`
+    ADD CONSTRAINT `FK_achats_commande_id`
+    FOREIGN KEY (`commande_id`) REFERENCES `commandes`(`rowid`);
+
+ALTER TABLE `comdetails`
+    ADD CONSTRAINT `FK_comdetails_pr_code`
     FOREIGN KEY (`pr_code`) REFERENCES `products`(`pr_code`);
 
 /* table achats */
 
-CREATE TABLE `achats` (
+CREATE TABLE `operations` (
     `commande_id` INT(10),
-    `date_achat` DATE NOT NULL,
-    `prix_achat` DECIMAL(10,2),
-    `commentaires` VARCHAR(255) NOT NULL
+    `date_operation` DATE NOT NULL,
+    `valuer_operation` DECIMAL(10,2),
+    `commentaires` TEXT NOT NULL
 );
 
-ALTER TABLE `achats`
+ALTER TABLE `operations`
     ADD `rowid` INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY FIRST;
 
-ALTER TABLE `achats`
+ALTER TABLE `operations`
     MODIFY `commande_id` INT(10) UNSIGNED;
 
-ALTER TABLE `achats`
-    ADD CONSTRAINT `FK_achats_commande_id`
+ALTER TABLE `operations`
+    ADD CONSTRAINT `FK_operations_commande_id`
     FOREIGN KEY (`commande_id`) REFERENCES `commandes`(`rowid`);
-
-/* table ventes */
-
-CREATE TABLE `ventes` (
-    `vente_name` VARCHAR(60) NOT NULL
-);
-
-ALTER TABLE `ventes`
-    ADD `rowid` INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY FIRST;
 
 /* table animaux */
 
