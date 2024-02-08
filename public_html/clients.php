@@ -20,7 +20,7 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  *            phpMyEditSetup.php script: 5.7.6
  *                     generated script: 5.7.6
  *
- * This file was NOT manually updated.
+ * This file was manually updated.
  */
 
 require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');

@@ -15,12 +15,33 @@ DROP TABLE IF EXISTS `ingredients`;
 DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `animaux`;
 
+/* create some metadata */
+
+DELETE FROM `pme_symbols`
+WHERE `sy_name` = 'UNITS'
+    OR (`sy_name` = 'SYMBOL' AND `sy_code` = 'UNITS');
+
+INSERT INTO `pme_symbols`
+    (`sy_name`, `sy_code`, `sy_value`)
+VALUES
+    ('SYMBOL', 'UNITS', 'types of units, foreign key');
+
+INSERT INTO `pme_symbols`
+    (`sy_name`, `sy_code`, `sy_value`)
+VALUES
+    ('UNITS', 'Kg', 'Kilogram'),
+    ('UNITS', 'g', 'gram'),
+    ('UNITS', 'Pce', 'Pieces'),
+    ('UNITS', 'L', 'Litre'),
+    ('UNITS', 'ml', 'millilitre'),
+    ('UNITS', '$', 'USD');
+
 /* ingredients table */
 
 CREATE TABLE `ingredients` (
     `in_code` CHAR(8) NOT NULL COMMENT 'the ingredient code, uppercase',
     `in_name` VARCHAR(60) NOT NULL COMMENT 'the ingredient code',
-    `in_unite` ENUM('KG', 'L', '') NOT NULL DEFAULT '',
+    `in_unite` CHAR(10) NOT NULL DEFAULT '',
     `status_code` CHAR(1) DEFAULT 'C' COMMENT 'valid codes: see table pme_statuscodes'
 );
 
@@ -39,10 +60,11 @@ DROP TRIGGER IF EXISTS `products_before_update`;
 CREATE TABLE `products` (
     `pr_code` CHAR(8) NOT NULL COMMENT 'the product code, uppercase',
     `pr_name` VARCHAR(60) NOT NULL COMMENT 'the product code',
-    `pr_type` ENUM('Achat', 'Vente') NOT NULL DEFAULT 'Achat',
-    `pr_unite` ENUM('KG', 'L', '') NOT NULL DEFAULT '',
+    `pr_type` SET('Achat', 'Vente') NOT NULL DEFAULT 'Achat,Vente',
+    `pr_unite` CHAR(10) NOT NULL DEFAULT '',
     `pr_prixunite` DECIMAL(10,2) DEFAULT 0.0,
     `pr_quantite` DECIMAL(10,2) DEFAULT 1,
+    `pr_ingredients` INT(10) DEFAULT 0,
     `status_code` CHAR(1) DEFAULT 'C' COMMENT 'valid codes: see table pme_statuscodes'
 );
 
@@ -55,40 +77,55 @@ ALTER TABLE `products`
 
 DELIMITER $$
 
-CREATE TRIGGER `products_before_insert` BEFORE INSERT
-    ON `products` FOR EACH ROW
+CREATE TRIGGER `products_before_insert`
+    BEFORE INSERT ON `products` FOR EACH ROW
 BEGIN
-    IF (NEW.`pr_code` IS NULL) THEN SET NEW.`pr_code` = NEW.`pr_name`; END IF;
+    IF (NEW.`status_code` IS NULL) OR (NEW.`status_code` = '') THEN
+        SET NEW.`status_code` = 'C';
+    END IF;
+    IF (NEW.`pr_code` IS NULL) OR (NEW.`pr_code` = '') THEN
+        SET NEW.`pr_code` = LEFT(NEW.`pr_name`,8);
+    END IF;
     SET NEW.`pr_code` = UPPER(NEW.`pr_code`);
-    IF (NEW.`status_code` IS NULL) THEN SET NEW.`status_code` = 'C'; END IF;
+    IF (NEW.`pr_unite` = '') THEN SET NEW.`pr_unite` = 'Pce'; END IF;
 END
 $$
 
-CREATE TRIGGER `products_before_update` BEFORE UPDATE
-    ON `products` FOR EACH ROW
+CREATE TRIGGER `products_before_update`
+    BEFORE UPDATE ON `products` FOR EACH ROW
 BEGIN
     IF NEW.`status_code` = OLD.`status_code` THEN
         /* set status code only if it has not been changed by the
            statement
         */
         SET NEW.`status_code` = 'M';
+    ELSEIF (NEW.`status_code` IS NULL) OR (NEW.`status_code` = '') THEN 
+        SET NEW.`status_code` = 'M';
     END IF;
-    IF (NEW.`pr_code` IS NULL) THEN SET NEW.`pr_code` = NEW.`pr_name`; END IF;
+    IF (NEW.`pr_code` IS NULL) OR (NEW.`pr_code` = '') THEN
+        /* cannot empty product code */
+        SET NEW.`pr_code` = OLD.`pr_code`;
+    END IF;
     IF NEW.`pr_code` != OLD.`pr_code` THEN
         SET NEW.`pr_code` = UPPER(NEW.`pr_code`);
     END IF;
+    IF (NEW.`pr_unite` = '') THEN SET NEW.`pr_unite` = 'Pce'; END IF;
 END
 $$
 
 DELIMITER ;
 
 INSERT INTO `products`
-    (`pr_code`, `pr_name`, `pr_type`)
+    (`pr_code`, `pr_name`, `pr_type`, `pr_unite`, `pr_quantite`)
 VALUES
-    ('HDP5', 'Huile de Palme Bidon 5L', 'Vente'),
-    ('MIEL500', 'Miel 500g', 'Vente');
+    ('HDP20', 'Huile de Palme Bidon 20L', 'Achat', 'L', 20),
+    ('HDP5', 'Huile de Palme Bidon 5L', 'Vente', 'L', 5),
+    ('MIEL500', 'Miel 500g', 'Vente', 'g', 500);
 
 /* table prodcomposition */
+
+DROP TRIGGER IF EXISTS `prodcomposition_after_insert`;
+DROP TRIGGER IF EXISTS `prodcomposition_after_delete`;
 
 CREATE TABLE `prodcomposition` (
     `pr_code` CHAR(8) NOT NULL COMMENT 'the product code',
@@ -107,10 +144,33 @@ ALTER TABLE `prodcomposition`
     ADD CONSTRAINT `FK_prodcomposition_in_code`
     FOREIGN KEY (`in_code`) REFERENCES `ingredients`(`in_code`);
 
+DELIMITER $$
+
+CREATE TRIGGER `prodcomposition_after_insert`
+    AFTER INSERT ON `prodcomposition` FOR EACH ROW
+BEGIN
+    UPDATE `products` SET `pr_ingredients` =
+        (SELECT COUNT(`pr_code`) FROM `prodcomposition` WHERE `pr_code` = NEW.`pr_code`)
+        WHERE `products`.`pr_code` = NEW.`pr_code`;
+END
+$$
+
+CREATE TRIGGER `prodcomposition_after_delete`
+    AFTER DELETE ON `prodcomposition` FOR EACH ROW
+BEGIN
+    UPDATE `products` SET `pr_ingredients` =
+        (SELECT COUNT(`pr_code`) FROM `prodcomposition` WHERE `pr_code` = OLD.`pr_code`)
+        WHERE `products`.`pr_code` = OLD.`pr_code`;
+END
+$$
+
+DELIMITER ;
+
 /* table partners */
 
 DROP TRIGGER IF EXISTS `partners_before_insert`;
 DROP TRIGGER IF EXISTS `partners_before_update`;
+DROP TRIGGER IF EXISTS `partners_before_delete`;
 
 CREATE TABLE `partners` (
     `pa_code` CHAR(8) NOT NULL COMMENT 'The partner code, cannot be changed once used',
@@ -131,8 +191,8 @@ ALTER TABLE `partners`
 
 DELIMITER $$
 
-CREATE TRIGGER `partners_before_insert` BEFORE INSERT
-    ON `partners` FOR EACH ROW
+CREATE TRIGGER `partners_before_insert`
+    BEFORE INSERT ON `partners` FOR EACH ROW
 BEGIN
     IF (NEW.`status_code` IS NULL) OR (NEW.`status_code` = '') THEN
         SET NEW.`status_code` = 'C';
@@ -147,9 +207,13 @@ BEGIN
 END
 $$
 
-CREATE TRIGGER `partners_before_update` BEFORE UPDATE
-    ON `partners` FOR EACH ROW
+CREATE TRIGGER `partners_before_update`
+    BEFORE UPDATE ON `partners` FOR EACH ROW
 BEGIN
+    IF OLD.`status_code` = 'S' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'CANNOT UPDATE SYSTEM RECORDS';
+    END IF;
     IF NEW.`status_code` = OLD.`status_code` THEN
         /* set status code only if it has not been changed by the
            statement
@@ -171,7 +235,22 @@ BEGIN
 END
 $$
 
+CREATE TRIGGER `partners_before_delete`
+    BEFORE DELETE ON `partners` FOR EACH ROW
+BEGIN
+    IF OLD.`status_code` = 'S' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'CANNOT DELETE SYSTEM RECORDS';
+    END IF;
+END
+$$
+
 DELIMITER ;
+
+INSERT INTO `partners`
+    (`pa_code`, `pa_name`, `pa_type`, `status_code`)
+VALUES
+    ('MANUFACT', 'Manufactoring (Own)', 'Fournisseur', 'S');
 
 /* table commandes */
 
@@ -211,8 +290,8 @@ ALTER TABLE `commandes`
 
 DELIMITER $$
 
-CREATE TRIGGER `commandes_before_insert` BEFORE INSERT
-    ON `commandes` FOR EACH ROW
+CREATE TRIGGER `commandes_before_insert`
+    BEFORE INSERT ON `commandes` FOR EACH ROW
 BEGIN
     IF NEW.`date_commande` IS NULL THEN
         SET NEW.`date_commande` = CURDATE();
@@ -220,8 +299,8 @@ BEGIN
 END
 $$
 
-CREATE TRIGGER `commandes_before_update` BEFORE UPDATE
-    ON `commandes` FOR EACH ROW
+CREATE TRIGGER `commandes_before_update`
+    BEFORE UPDATE ON `commandes` FOR EACH ROW
 BEGIN
     IF NEW.`date_commande` IS NULL THEN
         SET NEW.`date_commande` = OLD.`date_commande`;
@@ -259,8 +338,8 @@ ALTER TABLE `comdetails`
 
 DELIMITER $$
 
-CREATE TRIGGER `comdetails_after_insert` AFTER INSERT
-    ON `comdetails` FOR EACH ROW
+CREATE TRIGGER `comdetails_after_insert`
+    AFTER INSERT ON `comdetails` FOR EACH ROW
 BEGIN
     UPDATE `commandes` SET `articles` =
         (SELECT COUNT(`commande_id`) FROM `comdetails` WHERE `commande_id` = NEW.`commande_id`)
@@ -268,8 +347,8 @@ BEGIN
 END
 $$
 
-CREATE TRIGGER `comdetails_after_delete` AFTER DELETE
-    ON `comdetails` FOR EACH ROW
+CREATE TRIGGER `comdetails_after_delete`
+    AFTER DELETE ON `comdetails` FOR EACH ROW
 BEGIN
     UPDATE `commandes` SET `articles` =
         (SELECT COUNT(`commande_id`) FROM `comdetails` WHERE `commande_id` = OLD.`commande_id`)
@@ -284,7 +363,7 @@ DELIMITER ;
 CREATE TABLE `operations` (
     `commande_id` INT(10),
     `date_operation` DATE NOT NULL,
-    `valuer_operation` DECIMAL(10,2),
+    `value_operation` DECIMAL(10,2),
     `commentaires` TEXT NOT NULL
 );
 

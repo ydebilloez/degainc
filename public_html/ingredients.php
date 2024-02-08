@@ -20,12 +20,16 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  *            phpMyEditSetup.php script: 5.7.6
  *                     generated script: 5.7.6
  *
- * This file was NOT manually updated.
+ * This file was manually updated.
  */
 
 require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
+
+// custom settings
+$opts['options'] = 'ACVD';
+$opts['display']['sort'] = false;
 
 $opts['tb'] = 'ingredients';
 
@@ -57,48 +61,36 @@ $opts['fdd']['in_name'] = array(
 );
 $opts['fdd']['in_unite'] = array(
          'name' => 'Unité',
-       'select' => 'M',
-       'maxlen' => '2',
-       'values' => array(
-                  "KG",
-                  "L",
-                  ""),
+       'select' => 'T',
+       'maxlen' => '10',
            'js' => array('required' => true),
-         'sort' => true
+       'values' => array('table'  => 'pme_symbols',
+                         'column' => 'sy_code',
+                         'description' => array('columns' => array('sy_code', 'sy_value'),
+                                                'divs'    => array (' - ')),
+                         'filters' => 'sy_name = "UNITS"'
+                        )
 );
 $opts['fdd']['status_code'] = array(
          'name' => 'Status code',
        'select' => 'T',
+      'options' => 'VD',
        'maxlen' => '1',
       'default' => 'C',
        'values' => array('table'  => 'pme_statuscodes',
                          'column' => 'code',
                          'description' => array('columns' => array('code', 'status_name'),
                                                 'divs'    => array (' - '))
-                        ),
-         'sort' => true
+                        )
 );
 
 // possibly initialise page further before going to main function
 
 if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
-// now copy php variables over to js variables
-// protect sensitive variables so they cannot be read
-$cleanopts = $opts;
-unset($cleanopts['hn']); unset($cleanopts['pt']);
-unset($cleanopts['un']); unset($cleanopts['pw']);
-
 echo '
 <script>
-    var phpOpts = ' . json_encode($cleanopts) . ';
-    try {
-        if (typeof PME_js_init === \'function\') {
-            PME_js_init(phpOpts);
-        }
-    } catch(err) {
-        console.log(err);
-    }
+    PME_js_setPageTitle("Ingredients");
 </script>
 ';
 

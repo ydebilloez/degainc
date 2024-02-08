@@ -20,7 +20,7 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  *            phpMyEditSetup.php script: 5.7.6
  *                     generated script: 5.7.6
  *
- * This file was NOT manually updated.
+ * This file was manually updated.
  */
 
 require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
@@ -30,8 +30,6 @@ require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 // custom settings
 $opts['options'] = 'ACVD';
 $opts['display']['sort'] = false;
-$opts['buttons']['L']['down'] = array('-<<','-<','-add','-view','-change','-copy','-delete',
-                                    '->','->>','-goto','-goto_combo');
 
 $opts['tb'] = 'products';
 
@@ -63,7 +61,7 @@ $opts['fdd']['pr_name'] = array(
 );
 $opts['fdd']['pr_type'] = array(
          'name' => 'Type',
-       'select' => 'M',
+       'select' => 'C',
        'maxlen' => '5',
        'values' => array(
                   "Achat",
@@ -74,14 +72,16 @@ $opts['fdd']['pr_type'] = array(
 );
 $opts['fdd']['pr_unite'] = array(
          'name' => 'Unité',
-       'select' => 'M',
-       'maxlen' => '2',
-       'values' => array(
-                  "KG",
-                  "L",
-                  ""),
+       'select' => 'T',
+       'maxlen' => '10',
+      'default' => 'Pce',
            'js' => array('required' => true),
-         'sort' => true
+       'values' => array('table'  => 'pme_symbols',
+                         'column' => 'sy_code',
+                         'description' => array('columns' => array('sy_code', 'sy_value'),
+                                                'divs'    => array (' - ')),
+                         'filters' => 'sy_name = "UNITS"'
+                        )
 );
 $opts['fdd']['pr_prixunite'] = array(
          'name' => 'Prix Unité',
@@ -94,42 +94,37 @@ $opts['fdd']['pr_quantite'] = array(
          'name' => 'Quantité',
        'select' => 'N',
        'maxlen' => '10',
-      'default' => '1.00',
-         'sort' => true
+      'default' => '1.00'
 );
 $opts['fdd']['status_code'] = array(
          'name' => 'Status code',
        'select' => 'T',
+      'options' => 'VDR',
        'maxlen' => '1',
       'default' => 'C',
        'values' => array('table'  => 'pme_statuscodes',
                          'column' => 'code',
                          'description' => array('columns' => array('code', 'status_name'),
                                                 'divs'    => array (' - '))
-                        ),
-         'sort' => true
+                        )
 );
+$opts['fdd']['pr_ingredients'] = array(
+         'name' => '# ingredients',
+       'select' => 'T',
+      'options' => 'VL',
+          'css' => array('postfix' => 'detailsbutton'),
+      'URLdisp' => 'Ingredient(s): $value',
+          'URL' => 'prodcomposition.php?ro=rw&pr_code=$key'
+);
+
 
 // possibly initialise page further before going to main function
 
 if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
-// now copy php variables over to js variables
-// protect sensitive variables so they cannot be read
-$cleanopts = $opts;
-unset($cleanopts['hn']); unset($cleanopts['pt']);
-unset($cleanopts['un']); unset($cleanopts['pw']);
-
 echo '
 <script>
-    var phpOpts = ' . json_encode($cleanopts) . ';
-    try {
-        if (typeof PME_js_init === \'function\') {
-            PME_js_init(phpOpts);
-        }
-    } catch(err) {
-        console.log(err);
-    }
+    PME_js_setPageTitle("Produits");
 </script>
 ';
 

@@ -20,7 +20,7 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  *            phpMyEditSetup.php script: 5.7.6
  *                     generated script: 5.7.6
  *
- * This file was NOT manually updated.
+ * This file was manually updated.
  */
 
 require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
@@ -30,8 +30,6 @@ require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 $opts['options'] = 'ACVDL';
 $opts['navigation'] = 'BD';
 $opts['display']['sort'] = false;
-$opts['buttons']['L']['down'] = array('-<<','-<','-add','-view','-change','-copy','-delete',
-                                    '->','->>','-goto','-goto_combo');
 
 $opts['tb'] = 'prodcomposition';
 
@@ -105,6 +103,7 @@ echo '
     } catch(err) {
         console.log(err);
     }
+    PME_js_setPageTitle("Composition de produit");
 </script>
 ';
 

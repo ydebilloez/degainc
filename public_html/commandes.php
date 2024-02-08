@@ -31,6 +31,8 @@ $opts['tb'] = 'commandes';
 
 // custom settings overwriting general edit defaults
 $opts['options'] = 'VF';
+$opts['display']['query'] = false;
+$opts['display']['sort'] = false;
 
 // filter on subset
 $opts['filters'] = "`date_paiement` IS NULL";

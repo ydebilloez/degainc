@@ -82,7 +82,7 @@ $opts['fdd']['pa_code'] = array(
                          'column' => 'pa_code',
                          'description' => array('columns' => array('pa_code', 'pa_name', 'pa_type'),
                                                 'divs'    => array (' - ',' (',')')),
-                         'filters' => 'pa_type = "Fournisseur"'
+                         'filters' => 'pa_type = "Fournisseur" AND status_code != "S"'
                         ),
          'sort' => true
 );
