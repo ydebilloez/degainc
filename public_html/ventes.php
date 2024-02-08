@@ -97,7 +97,7 @@ $opts['fdd']['articles'] = array(
       'options' => 'VL',
           'css' => array('postfix' => 'detailsbutton'),
       'URLdisp' => 'Article(s): $value',
-          'URL' => 'comdetails.php?ro=rw&commande_id=$key'
+          'URL' => 'comdetails.php?ro=rw&commande_id=$key&operation=Vente'
 );
 
 // possibly initialise page further before going to main function

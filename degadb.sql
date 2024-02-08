@@ -198,7 +198,7 @@ CREATE TABLE `commandes` (
     `co_type` ENUM('Achat', 'Vente') NOT NULL,
     `pa_code` CHAR(8) NOT NULL,
     `date_paiement` DATE,
-    `articles` INT(10),
+    `articles` INT(10) DEFAULT 0,
     `commentaires` TEXT
 );
 
@@ -209,13 +209,12 @@ ALTER TABLE `commandes`
     ADD CONSTRAINT `FK_commandes_pa_code`
     FOREIGN KEY (`pa_code`) REFERENCES `partners`(`pa_code`);
 
-/*
 DELIMITER $$
 
 CREATE TRIGGER `commandes_before_insert` BEFORE INSERT
     ON `commandes` FOR EACH ROW
 BEGIN
-    IF (NEW.`date_commande` IS NULL) OR (NEW.`date_commande` = '') THEN
+    IF NEW.`date_commande` IS NULL THEN
         SET NEW.`date_commande` = CURDATE();
     END IF;
 END
@@ -224,15 +223,13 @@ $$
 CREATE TRIGGER `commandes_before_update` BEFORE UPDATE
     ON `commandes` FOR EACH ROW
 BEGIN
-    IF (NEW.`date_commande` IS NULL) OR (NEW.`date_commande` = '') THEN
+    IF NEW.`date_commande` IS NULL THEN
         SET NEW.`date_commande` = OLD.`date_commande`;
     END IF;
 END
 $$
 
 DELIMITER ;
-
-*/
 
 /* table comdetails */
 

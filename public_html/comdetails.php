@@ -33,9 +33,11 @@ $opts['cgi']['prefix']['data'] = 'commandes_';
 
 // custom settings overwriting general edit defaults
 $opts['cgi']['persist'] = array('commande_id' => $_REQUEST['commande_id'],
-                                'ro' => $_REQUEST['ro']);
+                                'ro' => $_REQUEST['ro'],
+                                'operation' => $_REQUEST['operation']);
 
 $orderID = $opts['cgi']['persist']['commande_id'];
+$operation = $opts['cgi']['persist']['operation'];
 
 if ($opts['cgi']['persist']['ro'] == 'ro') $opts['options'] = 'VL';
 else $opts['options'] = 'ACPVDL';
@@ -98,6 +100,9 @@ $opts['fdd']['pr_code'] = array(
                         ),
          'sort' => true
 );
+if (isset($operation) && ($operation != '')) {
+    $opts['fdd']['pr_code']['values']['filters'] = 'pr_type = "' . $operation . '"'; 
+}
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
