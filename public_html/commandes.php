@@ -32,6 +32,9 @@ $opts['tb'] = 'commandes';
 // custom settings overwriting general edit defaults
 $opts['options'] = 'VF';
 
+// filter on subset
+$opts['filters'] = "`date_paiement` IS NULL";
+
 // Name of field which is the unique key
 $opts['key'] = 'rowid';
 
@@ -90,6 +93,14 @@ $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
      'textarea' => array('rows' => 5, 'cols' => 80)
+);
+$opts['fdd']['articles'] = array(
+         'name' => '# articles',
+       'select' => 'T',
+      'options' => 'VL',
+          'css' => array('postfix' => 'detailsbutton'),
+      'URLdisp' => '$value article(s)',
+          'URL' => 'comdetails.php?ro=ro&commande_id=$key'
 );
 
 // possibly initialise page further before going to main function

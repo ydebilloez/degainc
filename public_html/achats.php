@@ -91,6 +91,14 @@ $opts['fdd']['commentaires'] = array(
        'select' => 'T',
      'textarea' => array('rows' => 5, 'cols' => 80)
 );
+$opts['fdd']['articles'] = array(
+         'name' => '# articles',
+       'select' => 'T',
+      'options' => 'VL',
+          'css' => array('postfix' => 'detailsbutton'),
+      'URLdisp' => 'Article(s): $value',
+          'URL' => 'comdetails.php?ro=rw&commande_id=$key'
+);
 
 // possibly initialise page further before going to main function
 

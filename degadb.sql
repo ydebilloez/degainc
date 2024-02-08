@@ -197,7 +197,8 @@ CREATE TABLE `commandes` (
     `date_commande` DATE NOT NULL,
     `co_type` ENUM('Achat', 'Vente') NOT NULL,
     `pa_code` CHAR(8) NOT NULL,
-    `date_paiement` DATE ,
+    `date_paiement` DATE,
+    `articles` INT(10),
     `commentaires` TEXT
 );
 
@@ -235,6 +236,9 @@ DELIMITER ;
 
 /* table comdetails */
 
+DROP TRIGGER IF EXISTS `comdetails_after_insert`;
+DROP TRIGGER IF EXISTS `comdetails_after_delete`;
+
 CREATE TABLE `comdetails` (
     `commande_id` INT(10),
     `pr_code` CHAR(8) NOT NULL,
@@ -255,6 +259,28 @@ ALTER TABLE `comdetails`
 ALTER TABLE `comdetails`
     ADD CONSTRAINT `FK_comdetails_pr_code`
     FOREIGN KEY (`pr_code`) REFERENCES `products`(`pr_code`);
+
+DELIMITER $$
+
+CREATE TRIGGER `comdetails_after_insert` AFTER INSERT
+    ON `comdetails` FOR EACH ROW
+BEGIN
+    UPDATE `commandes` SET `articles` =
+        (SELECT COUNT(`commande_id`) FROM `comdetails` WHERE `commande_id` = NEW.`commande_id`)
+        WHERE `commandes`.`rowid` = NEW.`commande_id`;
+END
+$$
+
+CREATE TRIGGER `comdetails_after_delete` AFTER DELETE
+    ON `comdetails` FOR EACH ROW
+BEGIN
+    UPDATE `commandes` SET `articles` =
+        (SELECT COUNT(`commande_id`) FROM `comdetails` WHERE `commande_id` = OLD.`commande_id`)
+        WHERE `commandes`.`rowid` = OLD.`commande_id`;
+END
+$$
+
+DELIMITER ;
 
 /* table achats */
 

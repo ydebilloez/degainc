@@ -14,6 +14,7 @@ $opts['inc'] = 15;
 $opts['options'] = 'ACPVDF';
 $opts['buttons']['L']['down'] = array('-<<','-<','-add','-view','-change','-copy','-delete',
                                     '->','->>','-goto','-goto_combo');
+$opts['buttons']['V']['down'] = array('-change','cancel');
 
 // Number of lines to display on multiple selection filters
 $opts['multiple'] = '4';
@@ -25,7 +26,7 @@ $opts['navigation'] = 'DG';
 // Display special page elements
 $opts['display'] = array(
     'form'  => true,
-    'query' => true,
+    'query' => false,
     'sort'  => true,
     'time'  => false,
     'tabs'  => true
