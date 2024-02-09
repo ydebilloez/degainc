@@ -83,8 +83,10 @@ BEGIN
     IF (NEW.`status_code` IS NULL) OR (NEW.`status_code` = '') THEN
         SET NEW.`status_code` = 'C';
     END IF;
-    IF (NEW.`pr_code` IS NULL) OR (NEW.`pr_code` = '') THEN
-        SET NEW.`pr_code` = LEFT(NEW.`pr_name`,8);
+    SET NEW.`pr_code` = REPLACE(REPLACE(REPLACE(NEW.`pr_code`, ' ', ''), '\t', ''), '\n', '');
+    IF (NEW.`pr_code` = '') THEN
+       /* cannot create with empty product code */
+        SET NEW.`pr_code` = LEFT(REPLACE(REPLACE(REPLACE(NEW.`pr_name`, ' ', ''), '\t', ''), '\n', ''),8);
     END IF;
     SET NEW.`pr_code` = UPPER(NEW.`pr_code`);
     IF (NEW.`pr_unite` = '') THEN SET NEW.`pr_unite` = 'Pce'; END IF;
@@ -94,7 +96,7 @@ $$
 CREATE TRIGGER `products_before_update`
     BEFORE UPDATE ON `products` FOR EACH ROW
 BEGIN
-    IF NEW.`status_code` = OLD.`status_code` THEN
+    IF (NEW.`status_code` = OLD.`status_code`) THEN
         /* set status code only if it has not been changed by the
            statement
         */
@@ -102,11 +104,13 @@ BEGIN
     ELSEIF (NEW.`status_code` IS NULL) OR (NEW.`status_code` = '') THEN 
         SET NEW.`status_code` = 'M';
     END IF;
-    IF (NEW.`pr_code` IS NULL) OR (NEW.`pr_code` = '') THEN
+    /* remove spaces from data-entry */
+    SET NEW.`pr_code` = REPLACE(REPLACE(REPLACE(NEW.`pr_code`, ' ', ''), '\t', ''), '\n', '');
+    IF (NEW.`pr_code` = '') THEN
         /* cannot empty product code */
         SET NEW.`pr_code` = OLD.`pr_code`;
-    END IF;
-    IF NEW.`pr_code` != OLD.`pr_code` THEN
+    ELSEIF (NEW.`pr_code` != OLD.`pr_code`) THEN
+        /* uppercase code */
         SET NEW.`pr_code` = UPPER(NEW.`pr_code`);
     END IF;
     IF (NEW.`pr_unite` = '') THEN SET NEW.`pr_unite` = 'Pce'; END IF;
@@ -197,8 +201,9 @@ BEGIN
     IF (NEW.`status_code` IS NULL) OR (NEW.`status_code` = '') THEN
         SET NEW.`status_code` = 'C';
     END IF;
-    IF (NEW.`pa_code` IS NULL) OR (NEW.`pa_code` = '') THEN
-        SET NEW.`pa_code` = LEFT(NEW.`pa_name`,8);
+    SET NEW.`pa_code` = REPLACE(REPLACE(REPLACE(NEW.`pa_code`, ' ', ''), '\t', ''), '\n', '');
+    IF (NEW.`pa_code` = '') THEN
+        SET NEW.`pa_code` = LEFT(REPLACE(REPLACE(REPLACE(NEW.`pa_name`, ' ', ''), '\t', ''), '\n', ''),8);
     END IF;
     SET NEW.`pa_code` = UPPER(NEW.`pa_code`);
     IF (NEW.`pa_type` IS NULL) OR (NEW.`pa_type` = '') THEN
@@ -210,11 +215,11 @@ $$
 CREATE TRIGGER `partners_before_update`
     BEFORE UPDATE ON `partners` FOR EACH ROW
 BEGIN
-    IF OLD.`status_code` = 'S' THEN
+    IF (OLD.`status_code` = 'S') THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'CANNOT UPDATE SYSTEM RECORDS';
     END IF;
-    IF NEW.`status_code` = OLD.`status_code` THEN
+    IF (NEW.`status_code` = OLD.`status_code`) THEN
         /* set status code only if it has not been changed by the
            statement
         */
@@ -222,11 +227,13 @@ BEGIN
     ELSEIF (NEW.`status_code` IS NULL) OR (NEW.`status_code` = '') THEN 
         SET NEW.`status_code` = 'M';
     END IF;
-    IF (NEW.`pa_code` IS NULL) OR (NEW.`pa_code` = '') THEN
+    IF (NEW.`pa_code` != OLD.`pa_code`) THEN
+        SET NEW.`pa_code` = REPLACE(REPLACE(REPLACE(NEW.`pa_code`, ' ', ''), '\t', ''), '\n', '');
+    END IF;
+    IF (NEW.`pa_code` = '') THEN
         /* cannot empty partner code */
         SET NEW.`pa_code` = OLD.`pa_code`;
-    END IF;
-    IF NEW.`pa_code` != OLD.`pa_code` THEN
+    ELSEIF (NEW.`pa_code` != OLD.`pa_code`) THEN
         SET NEW.`pa_code` = UPPER(NEW.`pa_code`);
     END IF;
     IF (NEW.`pa_type` IS NULL) OR (NEW.`pa_type` = '') THEN
@@ -238,7 +245,7 @@ $$
 CREATE TRIGGER `partners_before_delete`
     BEFORE DELETE ON `partners` FOR EACH ROW
 BEGIN
-    IF OLD.`status_code` = 'S' THEN
+    IF (OLD.`status_code` = 'S') THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'CANNOT DELETE SYSTEM RECORDS';
     END IF;
@@ -293,7 +300,7 @@ DELIMITER $$
 CREATE TRIGGER `commandes_before_insert`
     BEFORE INSERT ON `commandes` FOR EACH ROW
 BEGIN
-    IF NEW.`date_commande` IS NULL THEN
+    IF (NEW.`date_commande` IS NULL) THEN
         SET NEW.`date_commande` = CURDATE();
     END IF;
 END
@@ -302,7 +309,7 @@ $$
 CREATE TRIGGER `commandes_before_update`
     BEFORE UPDATE ON `commandes` FOR EACH ROW
 BEGIN
-    IF NEW.`date_commande` IS NULL THEN
+    IF (NEW.`date_commande` IS NULL) THEN
         SET NEW.`date_commande` = OLD.`date_commande`;
     END IF;
 END
