@@ -60,8 +60,8 @@ $opts['fdd']['pr_code'] = array(
            'js' => array('required' => true),
        'values' => array('table'  => 'products',
                          'column' => 'pr_code',
-                         'description' => array('columns' => array('pr_code', 'pr_name'),
-                                                'divs'    => array (' - '))
+                         'description' => array('columns' => array('pr_code', 'pr_name', 'pr_unite'),
+                                                'divs'    => array (' - ', ' (', ')'))
                         ),
          'sort' => true
 );
@@ -72,8 +72,8 @@ $opts['fdd']['in_code'] = array(
            'js' => array('required' => true),
        'values' => array('table'  => 'ingredients',
                          'column' => 'in_code',
-                         'description' => array('columns' => array('in_code', 'in_name'),
-                                                'divs'    => array (' - '))
+                         'description' => array('columns' => array('in_code', 'in_name', 'in_unite'),
+                                                'divs'    => array (' - ', ' (', ')'))
                         )
 );
 $opts['fdd']['quantite'] = array(

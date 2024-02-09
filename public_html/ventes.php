@@ -31,6 +31,7 @@ $opts['tb'] = 'commandes';
 
 // custom settings overwriting general edit defaults
 $opts['display']['sort'] = false;
+$opts['options'] = 'ACVDF';
 
 // filter on subset
 $opts['filters'] = "`co_type` = 'Vente' AND `date_paiement` IS NULL";
@@ -108,7 +109,7 @@ if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
 echo '
 <script>
-    PME_js_setPageTitle("Ventes en cours");
+    PME_js_setPageTitle("Commandes Ventes (en cours)");
 </script>
 ';
 

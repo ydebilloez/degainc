@@ -30,10 +30,14 @@ require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 $opts['tb'] = 'commandes';
 
 // custom settings overwriting general edit defaults
+$opts['cgi']['prefix']['data'] = 'achats_';
+$opts['cgi']['persist'] = array('oper' => $_REQUEST['oper']);
+$operation = $opts['cgi']['persist']['oper'];
 $opts['display']['sort'] = false;
+$opts['options'] = 'ACVDF';
 
 // filter on subset
-$opts['filters'] = "`co_type` = 'Achat' AND `date_paiement` IS NULL";
+$opts['filters'] = "`co_type` = '" . $operation ."' AND `date_paiement` IS NULL";
 
 // Name of field which is the unique key
 $opts['key'] = 'rowid';
@@ -56,12 +60,36 @@ $opts['fdd']['rowid'] = array(
          'sort' => true
 );
 $opts['fdd']['date_commande'] = array(
-         'name' => 'Date Achat',
+         'name' => 'Date ' . $operation,
        'select' => 'T',
       'default' => date('Y-m-d'),
        'maxlen' => '10',
          'sort' => true
 );
+if ($operation == 'Fabrication') {
+$opts['fdd']['co_type'] = array(
+         'name' => 'Operation',
+       'select' => 'R',
+      'options' => 'AVCPDH',
+       'maxlen' => '5',
+       'values' => array(
+                  "Fabrication"),
+      'default' => 'Fabrication',
+           'js' => array('required' => true)
+);
+$opts['fdd']['pa_code'] = array(
+         'name' => 'Centre de fabrication',
+       'select' => 'T',
+       'maxlen' => '8',
+           'js' => array('required' => true),
+       'values' => array('table'  => 'partners',
+                         'column' => 'pa_code',
+                         'description' => array('columns' => array('pa_code', 'pa_name'),
+                                                'divs'    => array (' - ')),
+                         'filters' => 'pa_type = "Usine"'
+                        )
+);
+} else {
 $opts['fdd']['co_type'] = array(
          'name' => 'Operation',
        'select' => 'R',
@@ -80,12 +108,13 @@ $opts['fdd']['pa_code'] = array(
            'js' => array('required' => true),
        'values' => array('table'  => 'partners',
                          'column' => 'pa_code',
-                         'description' => array('columns' => array('pa_code', 'pa_name', 'pa_type'),
-                                                'divs'    => array (' - ',' (',')')),
-                         'filters' => 'pa_type = "Fournisseur" AND status_code != "S"'
+                         'description' => array('columns' => array('pa_code', 'pa_name'),
+                                                'divs'    => array (' - ')),
+                         'filters' => 'pa_type = "Fournisseur"'
                         ),
          'sort' => true
 );
+}
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
@@ -97,7 +126,7 @@ $opts['fdd']['articles'] = array(
       'options' => 'VL',
           'css' => array('postfix' => 'detailsbutton'),
       'URLdisp' => 'Article(s): $value',
-          'URL' => 'comdetails.php?ro=rw&commande_id=$key&operation=Achat'
+          'URL' => 'comdetails.php?ro=rw&commande_id=$key&operation=' . $operation
 );
 
 // possibly initialise page further before going to main function
@@ -106,9 +135,15 @@ if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
 // Now important call to phpMyEdit
 
+if ($operation == 'Fabrication') {
+  $title = 'Fabrication';
+} else {
+  $title = 'Commandes Achats (en cours)';
+}
+
 echo '
 <script>
-    PME_js_setPageTitle("Achats en cours");
+    PME_js_setPageTitle("' . $title . '");
 </script>
 ';
 

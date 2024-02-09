@@ -181,7 +181,7 @@ CREATE TABLE `partners` (
     `pa_name` VARCHAR(60) NOT NULL COMMENT 'The partner name',
     `pa_phone` VARCHAR(60) COMMENT 'The partner phone',
     `pa_mail` VARCHAR(60) COMMENT 'The partner mail',
-    `pa_type` SET('Fournisseur', 'Client'),
+    `pa_type` SET('Fournisseur', 'Client', 'Usine'),
     `commentaires` TEXT,
     `status_code` CHAR(1) DEFAULT 'C' COMMENT 'valid codes: see table pme_statuscodes'
 );
@@ -257,7 +257,7 @@ DELIMITER ;
 INSERT INTO `partners`
     (`pa_code`, `pa_name`, `pa_type`, `status_code`)
 VALUES
-    ('MANUFACT', 'Manufactoring (Own)', 'Fournisseur', 'S');
+    ('MANUFACT', 'Manufactoring (Own)', 'Usine', 'S');
 
 /* table commandes */
 
@@ -277,14 +277,16 @@ INSERT INTO `pme_symbols`
     (`sy_name`, `sy_code`, `sy_value`)
 VALUES
     ('OPER_TYPE', 'Achat', 'Achat'),
-    ('OPER_TYPE', 'Vente', 'Vente');
+    ('OPER_TYPE', 'Vente', 'Vente'),
+    ('OPER_TYPE', 'Fabrication', 'Fabrication');
 
 CREATE TABLE `commandes` (
     `date_commande` DATE NOT NULL,
-    `co_type` ENUM('Achat', 'Vente') NOT NULL,
+    `co_type` ENUM('Achat', 'Vente', 'Fabrication') NOT NULL,
     `pa_code` CHAR(8) NOT NULL,
     `date_paiement` DATE,
     `articles` INT(10) DEFAULT 0,
+    `prixtotal` DECIMAL(10,2) DEFAULT 0,
     `commentaires` TEXT
 );
 
@@ -370,8 +372,8 @@ DELIMITER ;
 CREATE TABLE `operations` (
     `commande_id` INT(10),
     `date_operation` DATE NOT NULL,
-    `value_operation` DECIMAL(10,2),
-    `commentaires` TEXT NOT NULL
+    `value_operation` DECIMAL(10,2) DEFAULT 0,
+    `commentaires` TEXT
 );
 
 ALTER TABLE `operations`

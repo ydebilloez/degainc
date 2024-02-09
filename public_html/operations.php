@@ -29,6 +29,22 @@ require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
 $opts['tb'] = 'operations';
 
+// custom settings overwriting general edit defaults
+$opts['cgi']['prefix']['data'] = 'operations_';
+$opts['cgi']['persist'] = array('oper' => $_REQUEST['oper']);
+$operation = $opts['cgi']['persist']['oper'];
+
+if ($operation == 'Vente') {
+    $opts['filters'] = "`commande_id` in (select `commandes`.`rowid` from `commandes` where `commandes`.`co_type` = 'Vente')"; //AND `date_paiement` IS NULL
+    $filter = "`co_type` = 'Vente'";
+    $title = 'Paiment par client';
+} else {
+    // operation = Livraison
+    $opts['filters'] = "`commande_id` in (select `commandes`.`rowid` from `commandes` where `commandes`.`co_type` = 'Achat')"; //AND `date_paiement` IS NULL
+    $filter = "`co_type` = 'Achat'";
+    $title = 'Reglement fournisseur';
+}
+
 // Name of field which is the unique key
 $opts['key'] = 'rowid';
 
@@ -42,7 +58,7 @@ $opts['sort_field'] = array('rowid');
 */
 
 $opts['fdd']['rowid'] = array(
-         'name' => 'Rowid',
+         'name' => 'ID',
        'select' => 'T',
       'options' => 'VDR', // auto increment
        'maxlen' => '10',
@@ -51,34 +67,35 @@ $opts['fdd']['rowid'] = array(
          'sort' => true
 );
 $opts['fdd']['commande_id'] = array(
-         'name' => 'Commande ID',
+         'name' => 'Commande',
        'select' => 'T',
        'maxlen' => '10',
-  'values' => array(
-    'table'  => 'commandes',
-    'column' => 'rowid'
-  ),
+       'values' => array('table'  => 'commandes',
+                         'column' => 'rowid',
+                         'description' => array('columns' => array('date_commande', 'pa_code', 'commentaires'),
+                                                'divs'    => array (' - ', ' - ')),
+                         'filters' => $filter
+                        ),
          'sort' => true
 );
 $opts['fdd']['date_operation'] = array(
-         'name' => 'Date operation',
+         'name' => 'Date ' . $operation,
        'select' => 'T',
        'maxlen' => '10',
+      'default' => date('Y-m-d'),
            'js' => array('required' => true),
          'sort' => true
 );
-$opts['fdd']['valuer_operation'] = array(
-         'name' => 'Valuer operation',
+$opts['fdd']['value_operation'] = array(
+         'name' => 'Montant ' . $operation,
        'select' => 'N',
        'maxlen' => '10',
-         'sort' => true
+      'default' => '0'
 );
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
-       'maxlen' => '255',
-           'js' => array('required' => true),
-         'sort' => true
+       'maxlen' => '255'
 );
 
 // possibly initialise page further before going to main function
@@ -101,6 +118,7 @@ echo '
     } catch(err) {
         console.log(err);
     }
+    PME_js_setPageTitle(" ' . $title . '");
 </script>
 ';
 

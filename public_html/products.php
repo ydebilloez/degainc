@@ -78,10 +78,15 @@ $opts['fdd']['pr_unite'] = array(
            'js' => array('required' => true),
        'values' => array('table'  => 'pme_symbols',
                          'column' => 'sy_code',
-                         'description' => array('columns' => array('sy_code', 'sy_value'),
-                                                'divs'    => array (' - ')),
+                         'description' => array('columns' => array('sy_value')),
                          'filters' => 'sy_name = "UNITS"'
                         )
+);
+$opts['fdd']['pr_quantite'] = array(
+         'name' => 'Quantité',
+       'select' => 'N',
+       'maxlen' => '10',
+      'default' => '1.00'
 );
 $opts['fdd']['pr_prixunite'] = array(
          'name' => 'Prix Unité',
@@ -89,12 +94,6 @@ $opts['fdd']['pr_prixunite'] = array(
        'maxlen' => '10',
       'default' => '0.00',
          'sort' => true
-);
-$opts['fdd']['pr_quantite'] = array(
-         'name' => 'Quantité',
-       'select' => 'N',
-       'maxlen' => '10',
-      'default' => '1.00'
 );
 $opts['fdd']['status_code'] = array(
          'name' => 'Status code',

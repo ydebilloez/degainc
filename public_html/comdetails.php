@@ -29,15 +29,15 @@ require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
 $opts['tb'] = 'comdetails';
 
-$opts['cgi']['prefix']['data'] = 'commandes_';
-
 // custom settings overwriting general edit defaults
+$opts['cgi']['prefix']['data'] = 'commandes_';
 $opts['cgi']['persist'] = array('commande_id' => $_REQUEST['commande_id'],
                                 'ro' => $_REQUEST['ro'],
                                 'operation' => $_REQUEST['operation']);
 
 $orderID = $opts['cgi']['persist']['commande_id'];
 $operation = $opts['cgi']['persist']['operation'];
+if ($operation == 'Fabrication') $operation = 'Vente';
 
 if ($opts['cgi']['persist']['ro'] == 'ro') $opts['options'] = 'VL';
 else $opts['options'] = 'ACPVDL';
@@ -82,12 +82,6 @@ $opts['fdd']['commande_id'] = array(
                         ),
          'sort' => true
 );
-$opts['fdd']['quantite'] = array(
-         'name' => 'Quantite',
-       'select' => 'N',
-       'maxlen' => '10',
-      'default' => '1.00'
-);
 $opts['fdd']['pr_code'] = array(
          'name' => 'Produit',
        'select' => 'T',
@@ -95,14 +89,20 @@ $opts['fdd']['pr_code'] = array(
            'js' => array('required' => true),
        'values' => array('table'  => 'products',
                          'column' => 'pr_code',
-                         'description' => array('columns' => array('pr_code', 'pr_name'),
-                                                'divs'    => array (' - '))
+                         'description' => array('columns' => array('pr_code', 'pr_name', 'pr_unite'),
+                                                'divs'    => array (' - ', ' (', ')'))
                         ),
          'sort' => true
 );
 if (isset($operation) && ($operation != '')) {
     $opts['fdd']['pr_code']['values']['filters'] = 'pr_type = "' . $operation . '"'; 
 }
+$opts['fdd']['quantite'] = array(
+         'name' => 'Quantite',
+       'select' => 'N',
+       'maxlen' => '10',
+      'default' => '1.00'
+);
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
