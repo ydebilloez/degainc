@@ -1,5 +1,52 @@
 <?php
 include(dirname(__FILE__).'/phpMyEditHeader.php');
+
+//if (!defined('DEBUG')) define('DEBUG', 1);
+
+function phpMyEditPageHeader($inst) {
+    if (in_array($inst->{'page_type'}, array('L', 'A', 'C', 'V', 'D'))) {
+        $commande = $inst->{'fdd'}['commande_id']['default'];
+        $row = $inst->QueryDB("SELECT * FROM `commandes` WHERE `rowid` = $commande");
+        if (defined('DEBUG')) echo print_r($row, true) . "\n";
+        if ($row['co_type'] == 'Fabrication') {
+            echo "<pre>
+Batch   : {$row['co_type']} #{$commande} - {$row['date_commande']} - {$row['commentaires']}
+Usine   : {$row['pa_code']}
+</pre>";
+        } else {
+            echo "<pre>
+Commande: {$row['co_type']} #{$commande} - {$row['date_commande']} - {$row['commentaires']}
+Client  : {$row['pa_code']}
+Payé le : {$row['date_paiement']}
+</pre>";            
+        }
+    }
+/*
+    if (defined('DEBUG')) {
+        echo '<pre>' . "\n";
+        echo 'Inside obj: ' . print_r($inst, true);
+        echo '</pre>' . "\n";            
+    }
+*/
+}
+
+function phpMyEditPageFooter($inst) {
+    if (in_array($inst->{'page_type'}, array('L'))) {
+        $commande = $inst->{'fdd'}['commande_id']['default'];
+        $row = $inst->QueryDB("SELECT * FROM `commandes` WHERE `rowid` = $commande");
+        if (defined('DEBUG')) echo print_r($row, true) . "\n";  
+        if ($row['co_type'] == 'Fabrication') {
+            echo "<pre>
+{$row['articles']} Article(s)
+</pre>";        
+        } else {
+            echo "<pre>
+{$row['articles']} Article(s) pour un total de {$row['prixtotal']} USD
+</pre>";        
+        }
+    }
+}
+
 ?>
 
 <?php
@@ -23,7 +70,7 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  * This file was manually updated.
  */
 
-require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
+require_once(dirname(__FILE__).'/lib/extensions/phpMyEdit-multiquery.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
@@ -32,8 +79,12 @@ $opts['tb'] = 'comdetails';
 // custom settings overwriting general edit defaults
 $opts['cgi']['prefix']['data'] = 'commandes_';
 $opts['cgi']['persist'] = array('commande_id' => $_REQUEST['commande_id'],
-                                'ro' => $_REQUEST['ro'],
-                                'operation' => $_REQUEST['operation']);
+                                'ro' => $_REQUEST['ro']);
+if (isset($_REQUEST['operation'])) {
+    $opts['cgi']['persist']['operation'] = $_REQUEST['operation'];
+} else {
+    $opts['cgi']['persist']['operation'] = '';
+}
 
 $orderID = $opts['cgi']['persist']['commande_id'];
 $operation = $opts['cgi']['persist']['operation'];
@@ -115,13 +166,13 @@ if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
 echo '
 <script>
-    PME_js_setPageTitle("Details de la commande '.$orderID.'");
+    PME_js_setPageTitle("");
 </script>
 ';
 
 // Now important call to phpMyEdit
 
-new phpMyEdit($opts);
+new phpMyEdit_MultiQuery($opts);
 
 //eof
 
