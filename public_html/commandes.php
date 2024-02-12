@@ -1,5 +1,22 @@
 <?php
 include(dirname(__FILE__).'/phpMyEditHeader.php');
+
+function phpMyEditPageFooter($inst) {
+    $commande = $inst->{'rec'};
+    if (in_array($inst->{'page_type'}, array('A', 'C', 'V', 'D'))) {
+        $rows = $inst->FetchDB("SELECT * FROM `comdetails` WHERE `commande_id` = $commande");
+        echo "<br />\n";
+        echo "<hr class='gradientline' data-caption='Details'>\n";
+        echo "<table class='pme-main'>\n";
+        foreach ($rows as $row) {
+            echo "<tr class='pme-row'>";
+            foreach($row as $cell) echo "<td class='pme-value'>$cell</td>";
+            echo "</tr>\n";
+        }
+        echo '</table>' . "\n";
+    }
+}
+
 ?>
 
 <?php
@@ -23,19 +40,61 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  * This file was manually updated.
  */
 
-require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
+require_once(dirname(__FILE__).'/lib/extensions/phpMyEdit-multiquery.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
 $opts['tb'] = 'commandes';
 
 // custom settings overwriting general edit defaults
-$opts['options'] = 'VF';
 $opts['display']['query'] = false;
 $opts['display']['sort'] = false;
 
-// filter on subset
-$opts['filters'] = "`date_paiement` IS NULL";
+// page operations
+$opts['cgi']['prefix']['data'] = 'commandes_';
+$opts['cgi']['persist'] = array('oper' => $_REQUEST['oper'],
+                                'status' => $_REQUEST['status']);
+
+$opts['sort_field'] = array('date_commande');
+if ($opts['cgi']['persist']['oper'] == 'List') {
+    $oper = 'View';
+    $opts['options'] = 'VF';
+    if ($opts['cgi']['persist']['status'] == 'Open') {
+        $title = "Commandes (achat et vente)";
+        $opts['filters'] = "`date_paiement` IS NULL";
+    } else {
+        $title = "Commandes complétées";
+        $opts['filters'] = "`date_paiement` IS NOT NULL";
+        $opts['sort_field'] = array('date_commande','date_paiement');
+    }
+} else {
+    if ($opts['cgi']['persist']['status'] == 'Closed') {
+        $oper = 'View';
+        $opts['options'] = 'VF';
+    } else {
+        $oper = 'Change';
+        $opts['options'] = 'ACVDF';
+    }
+    $title = "Commandes " . $opts['cgi']['persist']['oper'];
+    if ($opts['cgi']['persist']['status'] == '') {
+        $opts['filters'] = "`co_type` = '" . $opts['cgi']['persist']['oper'] . "'";
+    } else if ($opts['cgi']['persist']['status'] == 'Open') {
+        $opts['filters'] = "`co_type` = '" . $opts['cgi']['persist']['oper'] . "' AND `date_paiement` IS NULL";
+    } else {
+        $opts['filters'] = "`co_type` = '" . $opts['cgi']['persist']['oper'] . "' AND `date_paiement` IS NOT NULL";      
+        $opts['sort_field'] = array('date_commande','date_paiement');
+    }
+}
+
+if ($opts['cgi']['persist']['oper'] == 'Achat') {
+    $partner = 'Fournisseur';
+} else if ($opts['cgi']['persist']['oper'] == 'Vente') {
+    $partner = 'Client';
+} else if ($opts['cgi']['persist']['oper'] == 'Fabrication') {
+    $partner = 'Usine';
+} else {
+    $partner = 'Partner';
+}
 
 // Name of field which is the unique key
 $opts['key'] = 'rowid';
@@ -43,20 +102,10 @@ $opts['key'] = 'rowid';
 // Type of key field (int/real/string/date etc.)
 $opts['key_type'] = 'int';
 
-// Sorting field(s)
-$opts['sort_field'] = array('date_commande');
-
 /* please refer to lib/phpMyEditInfo.php for additional options
    that can be added in this file
 */
 
-$opts['fdd']['rowid'] = array(
-         'name' => 'ID',
-       'select' => 'T',
-      'options' => 'VDR', // auto increment
-       'maxlen' => '10',
-         'sort' => true
-);
 $opts['fdd']['co_type'] = array(
          'name' => 'Type',
        'select' => 'R',
@@ -66,21 +115,46 @@ $opts['fdd']['co_type'] = array(
                   "Vente"),
            'js' => array('required' => true)
 );
-$opts['fdd']['date_commande'] = array(
-         'name' => 'Date commande',
-       'select' => 'T',
-       'maxlen' => '10',
-         'sort' => true
-);
-$opts['fdd']['date_paiement'] = array(
-         'name' => 'Date paiement',
+if ($opts['cgi']['persist']['oper'] != 'List') { 
+    $opts['fdd']['co_type']['options'] = 'AVCPDR';
+    $opts['fdd']['co_type']['default'] = $opts['cgi']['persist']['oper'];
+}
+if ($partner == 'Usine') {
+    $opts['fdd']['co_type']['values'] = array('Fabrication');
+}
+
+$opts['fdd']['rowid'] = array(
+         'name' => 'ID',
        'select' => 'T',
       'options' => 'VDLR',
        'maxlen' => '10',
          'sort' => true
 );
+
+$opts['fdd']['date_commande'] = array(
+         'name' => 'Date commande',
+       'select' => 'T',
+      'default' => date('Y-m-d'),
+       'maxlen' => '10',
+         'sort' => true
+);
+if ($opts['cgi']['persist']['oper'] != 'List') {
+    $opts['fdd']['date_commande']['name'] = 'Date ' . $opts['cgi']['persist']['oper'];
+}
+
+if ($opts['cgi']['persist']['status'] == 'Closed') {
+    $opts['fdd']['date_paiement'] = array(
+             'name' => 'Date paiement',
+           'select' => 'T',
+          'default' => date('Y-m-d'),
+          'options' => 'VDLR',
+           'maxlen' => '10',
+             'sort' => true
+    );
+}
+
 $opts['fdd']['pa_code'] = array(
-         'name' => 'Partner',
+         'name' => $partner,
        'select' => 'T',
        'maxlen' => '8',
            'js' => array('required' => true),
@@ -91,33 +165,36 @@ $opts['fdd']['pa_code'] = array(
                         ),
          'sort' => true
 );
+if ($opts['cgi']['persist']['oper'] != 'List') { 
+    $opts['fdd']['pa_code']['values']['filters'] = '`pa_type` = "' . $partner .'"';
+}
+if ($partner == 'Usine') {
+    $opts['cgi']['persist']['name'] = 'Centre de Fabrication';
+}
+
+$opts['fdd']['articles'] = array(
+         'name' => 'Articles',
+       'select' => 'T',
+      'options' => 'VL',
+          'css' => array('postfix' => 'detailsbutton'),
+      'URLdisp' => $oper . ' $value article(s)',
+          'URL' => 'comdetails.php?oper=' . $opts['cgi']['persist']['oper'] . '&commande_id=$key'
+);
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
      'textarea' => array('rows' => 5, 'cols' => 80)
 );
-$opts['fdd']['articles'] = array(
-         'name' => '# articles',
-       'select' => 'T',
-      'options' => 'VL',
-          'css' => array('postfix' => 'detailsbutton'),
-      'URLdisp' => '$value article(s)',
-          'URL' => 'comdetails.php?ro=ro&commande_id=$key'
-);
-
-// possibly initialise page further before going to main function
-
-if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
 // Now important call to phpMyEdit
 
 echo '
 <script>
-    PME_js_setPageTitle("Commandes (achat et vente)");
+    PME_js_setPageTitle("' . $title . '");
 </script>
 ';
 
-new phpMyEdit($opts);
+new phpMyEdit_MultiQuery($opts);
 
 //eof
 

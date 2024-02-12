@@ -40,6 +40,8 @@ $opts['key_type'] = 'char';
 // Sorting field(s)
 $opts['sort_field'] = array('pa_code');
 
+$opts['options'] = 'ACVDF';
+
 /* please refer to lib/phpMyEditInfo.php for additional options
    that can be added in this file
 */
@@ -78,7 +80,8 @@ $opts['fdd']['pa_type'] = array(
        'maxlen' => '11',
        'values' => array(
                   "Fournisseur",
-                  "Client")
+                  "Client",
+                  "Usine")
 );
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
@@ -88,7 +91,7 @@ $opts['fdd']['commentaires'] = array(
 $opts['fdd']['status_code'] = array(
          'name' => 'Status code',
        'select' => 'T',
-      'options' => 'VDR',
+      'options' => 'VCPDR',
          'help' => 'valid codes: see table pme_statuscodes',
        'maxlen' => '1',
       'default' => 'C',

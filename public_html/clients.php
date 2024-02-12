@@ -43,6 +43,8 @@ $opts['key_type'] = 'char';
 // Sorting field(s)
 $opts['sort_field'] = array('pa_code');
 
+$opts['options'] = 'ACVDF';
+
 /* please refer to lib/phpMyEditInfo.php for additional options
    that can be added in this file
 */

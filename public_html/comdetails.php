@@ -77,21 +77,16 @@ require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 $opts['tb'] = 'comdetails';
 
 // custom settings overwriting general edit defaults
-$opts['cgi']['prefix']['data'] = 'commandes_';
+$opts['cgi']['prefix']['data'] = 'comdetails_';
 $opts['cgi']['persist'] = array('commande_id' => $_REQUEST['commande_id'],
-                                'ro' => $_REQUEST['ro']);
-if (isset($_REQUEST['operation'])) {
-    $opts['cgi']['persist']['operation'] = $_REQUEST['operation'];
-} else {
-    $opts['cgi']['persist']['operation'] = '';
-}
+                                'oper' => $_REQUEST['oper']);
 
 $orderID = $opts['cgi']['persist']['commande_id'];
-$operation = $opts['cgi']['persist']['operation'];
-if ($operation == 'Fabrication') $operation = 'Vente';
+$oper = $opts['cgi']['persist']['oper'];
+if ($oper == 'Fabrication') $oper = 'Vente';
 
-if ($opts['cgi']['persist']['ro'] == 'ro') $opts['options'] = 'VL';
-else $opts['options'] = 'ACPVDL';
+if ($opts['cgi']['persist']['oper'] == 'List') $opts['options'] = 'VL';
+else $opts['options'] = 'ACVDL';
 
 $opts['display']['sort'] = false;
 
@@ -145,8 +140,8 @@ $opts['fdd']['pr_code'] = array(
                         ),
          'sort' => true
 );
-if (isset($operation) && ($operation != '')) {
-    $opts['fdd']['pr_code']['values']['filters'] = 'pr_type = "' . $operation . '"'; 
+if (isset($oper) && ($oper != '')) {
+    $opts['fdd']['pr_code']['values']['filters'] = 'pr_type = "' . $oper . '"'; 
 }
 $opts['fdd']['quantite'] = array(
          'name' => 'Quantite',
