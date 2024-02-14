@@ -42,6 +42,6 @@ $opts['cgi']['prefix']['data']      = 'PME_data_';
 /* Get the user's default language and use it if possible or you can
    specify particular one you want to use. Refer to official documentation
    for list of available languages. */
-$opts['language'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'] . '-UTF8';
+$opts['language'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 
 $opts['logtable'] = 'changelog';
