@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS `partners`;
 DROP TABLE IF EXISTS `prodcomposition`;
 DROP TABLE IF EXISTS `ingredients`;
 DROP TABLE IF EXISTS `products`;
+DROP TABLE IF EXISTS `reports`;
 DROP TABLE IF EXISTS `animaux`;
 
 /* create some metadata */
@@ -411,6 +412,28 @@ ALTER TABLE `operations`
 ALTER TABLE `operations`
     ADD CONSTRAINT `FK_operations_commande_id`
     FOREIGN KEY (`commande_id`) REFERENCES `commandes`(`rowid`);
+
+/* reports table */
+
+CREATE TABLE `reports` (
+    `re_name` VARCHAR(60) NOT NULL COMMENT 'the name of the report',
+    `date_debut` DATE,
+    `date_fin` DATE,
+    `re_type` SET('Fabrication', 'Achat', 'Vente'),
+    `commandes` INT(10) DEFAULT 0,
+    `articles` INT(10) DEFAULT 0,
+    `prixtotal` DECIMAL(10,2) DEFAULT 0
+);
+
+ALTER TABLE `reports`
+    ADD `rowid` INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY FIRST;
+
+INSERT INTO `reports`
+    (`re_name`, `re_type`, `date_debut`)
+VALUES
+    ('Total production de la période', 'Fabrication', CURDATE() ),
+    ('Total achats de la période', 'Achat', CURDATE() ),
+    ('Total ventes de la période', 'Vente', CURDATE() );
 
 /* table animaux */
 

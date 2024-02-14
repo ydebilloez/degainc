@@ -12,7 +12,10 @@
     <li><a href='commandes.php?oper=Vente&status=Open'>Commandes-Ventes</a></li>
     <li><a href='commandes.php?oper=Achat&status=Closed'>Anciens-Achats</a></li>
     <li><a href='commandes.php?oper=Vente&status=Closed'>Anciens-Ventes</a></li>
+<!--
     <li><a href='operations.php?oper=Livraison'>Livraisons (IN)</a></li>
     <li><a href='operations.php?oper=Vente'>Paiement client</a></li>
+-->
+    <li><a href='reports.php'>Rapports</a></li>
     <li class='not-vertical'><a href='animaux.php'>Animaux</a></li>
 </menu>
