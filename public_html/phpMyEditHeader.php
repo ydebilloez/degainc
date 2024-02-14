@@ -9,9 +9,6 @@
     <script type="text/javascript" src="js/phpMyEdit.js"></script>
     <style type="text/css">
 /* override default vertical menu layout */
-menu.pme-menu {
-  display: no-wrap;
-}
 menu.pme-menu li {
   display: inline-block;
 }
