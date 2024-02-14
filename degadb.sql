@@ -264,6 +264,8 @@ VALUES
 DROP TRIGGER IF EXISTS `commandes_before_insert`;
 DROP TRIGGER IF EXISTS `commandes_before_update`;
 
+DROP PROCEDURE IF EXISTS `commandes_recalctotal`;
+
 DELETE FROM `pme_symbols`
 WHERE `sy_name` = 'OPER_TYPE'
     OR (`sy_name` = 'SYMBOL' AND `sy_code` = 'OPER_TYPE');
@@ -299,6 +301,17 @@ ALTER TABLE `commandes`
 
 DELIMITER $$
 
+CREATE PROCEDURE commandes_recalctotal(in_commande_id INT)
+BEGIN
+    UPDATE `commandes` SET `prixtotal` = (
+        SELECT SUM(`comdetails`.`quantite` * `products`.`pr_prixunite`)
+        FROM `comdetails`, `products`
+        WHERE `comdetails`.`commande_id` = in_commande_id
+          AND `comdetails`.`pr_code` = `products`.`pr_code`)
+    WHERE `commandes`.`rowid` = in_commande_id;
+END
+$$
+
 CREATE TRIGGER `commandes_before_insert`
     BEFORE INSERT ON `commandes` FOR EACH ROW
 BEGIN
@@ -322,6 +335,7 @@ DELIMITER ;
 /* table comdetails */
 
 DROP TRIGGER IF EXISTS `comdetails_after_insert`;
+DROP TRIGGER IF EXISTS `comdetails_after_update`;
 DROP TRIGGER IF EXISTS `comdetails_after_delete`;
 
 CREATE TABLE `comdetails` (
@@ -353,6 +367,17 @@ BEGIN
     UPDATE `commandes` SET `articles` =
         (SELECT COUNT(`commande_id`) FROM `comdetails` WHERE `commande_id` = NEW.`commande_id`)
         WHERE `commandes`.`rowid` = NEW.`commande_id`;
+    CALL commandes_recalctotal(NEW.`commande_id`);
+END
+$$
+
+CREATE TRIGGER `comdetails_after_update`
+    AFTER UPDATE ON `comdetails` FOR EACH ROW
+BEGIN
+    CALL commandes_recalctotal(OLD.`commande_id`);
+    IF OLD.`commande_id` != NEW.`commande_id` THEN
+        CALL commandes_recalctotal(NEW.`commande_id`);
+    END IF;
 END
 $$
 
@@ -362,6 +387,7 @@ BEGIN
     UPDATE `commandes` SET `articles` =
         (SELECT COUNT(`commande_id`) FROM `comdetails` WHERE `commande_id` = OLD.`commande_id`)
         WHERE `commandes`.`rowid` = OLD.`commande_id`;
+    CALL commandes_recalctotal(OLD.`commande_id`);
 END
 $$
 
