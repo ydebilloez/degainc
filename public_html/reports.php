@@ -41,6 +41,12 @@ echo '
 <script>
     PME_js_setPageTitle("' . $title . '");
 </script>
+<style>
+    table.pme-navigation tr.pme-navigation td.pme-stats,
+    table.pme-navigation tr.pme-navigation td.pme-message {
+        display: none;
+    }
+</style>
 ';
 }
 
