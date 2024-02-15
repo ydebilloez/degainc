@@ -15,6 +15,9 @@ menu.pme-menu li {
 menu.pme-menu li:not(:last-child) {
   padding-right: 10px;
 }
+table.pme-navigation tr.pme-navigation td.pme-message {
+  display: none;
+}
     </style>
 </head>
 <body class='pme-main'>
