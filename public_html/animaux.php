@@ -9,7 +9,7 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  * of options that can be used with phpMyEdit. To get information about all
  * features offered by phpMyEdit, please check the documentation. It is available
  * on the phpMyEdit pages or in the manuals folder. Some information can also be
- * found in the lib/configoptions.md file.
+ * found in the examples/configoptions.md file.
  *
  * https://sourceforge.net/projects/phpmariaedit/
  *
@@ -43,6 +43,7 @@ $opts['sort_field'] = array('an_code');
 $opts['fdd']['an_code'] = array(
          'name' => 'Code',
        'select' => 'T',
+         'help' => 'the animal code, uppercase',
        'maxlen' => '8',
            'js' => array('required' => true),
          'sort' => true
@@ -50,6 +51,7 @@ $opts['fdd']['an_code'] = array(
 $opts['fdd']['an_name'] = array(
          'name' => 'Name',
        'select' => 'T',
+         'help' => 'the animal name',
        'maxlen' => '60',
            'js' => array('required' => true),
          'sort' => true
@@ -57,6 +59,7 @@ $opts['fdd']['an_name'] = array(
 $opts['fdd']['status_code'] = array(
          'name' => 'Status code',
        'select' => 'T',
+         'help' => 'valid codes: see table pme_statuscodes',
        'maxlen' => '1',
       'default' => 'C',
        'values' => array('table'  => 'pme_statuscodes',
@@ -67,26 +70,9 @@ $opts['fdd']['status_code'] = array(
          'sort' => true
 );
 
-// possibly initialise page further before going to main function
-
-if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
-
-// now copy php variables over to js variables
-// protect sensitive variables so they cannot be read
-$cleanopts = $opts;
-unset($cleanopts['hn']); unset($cleanopts['pt']);
-unset($cleanopts['un']); unset($cleanopts['pw']);
-
 echo '
 <script>
-    var phpOpts = ' . json_encode($cleanopts) . ';
-    try {
-        if (typeof PME_js_init === \'function\') {
-            PME_js_init(phpOpts);
-        }
-    } catch(err) {
-        console.log(err);
-    }
+    PME_js_setPageTitle("animaux");
 </script>
 ';
 
