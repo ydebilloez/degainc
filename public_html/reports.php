@@ -32,7 +32,7 @@ function phpMyEditPageHeader(&$inst) {
         $report = $inst->QueryDB("SELECT * FROM `reports` WHERE `rowid` = " . $inst->{'rec'});
         $title = $report['re_name'];
     } else {
-        $title = 'Rapports';
+        $title = '';
     }
 
     $inst->{'labels'}['Apply'] = 'Mettre à jour le rapport';
@@ -42,6 +42,8 @@ echo '
     PME_js_setPageTitle("' . $title . '");
 </script>
 <style>
+    table.pme-main.pme-list tr.pme-header th.pme-header,
+    table.pme-main.pme-list tr.pme-row td.pme-navigation,
     table.pme-navigation tr.pme-navigation td.pme-stats,
     table.pme-navigation tr.pme-navigation td.pme-message {
         display: none;
@@ -59,7 +61,7 @@ function phpMyEditPageFooter($inst) {
         PrintAssociateLine($report);
         */
 
-        echo "<hr class='gradientline' data-caption='Report'>\n";
+        echo "<hr class='gradientline' data-caption='Rapport'>\n";
 
         $where =  " WHERE `date_commande` >= str_to_date('" .
                 $report['date_debut'] . "','%Y-%m-%d')";
@@ -154,7 +156,7 @@ $opts['fdd']['rowid'] = array(
        'maxlen' => '10'
 );
 $opts['fdd']['re_name'] = array(
-         'name' => 'Rapport',
+         'name' => 'Liste des Rapports',
        'select' => 'T',
       'options' => 'L',
           'css' => array('postfix' => 'detailslink'),
@@ -165,7 +167,7 @@ $opts['fdd']['re_name'] = array(
 $opts['fdd']['re_type'] = array(
          'name' => 'Type',
        'select' => 'T',
-      'options' => 'LR',
+      'options' => 'R',
        'maxlen' => '11',
        'values' => array(
                   "Fabrication",
