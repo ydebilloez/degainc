@@ -96,13 +96,10 @@ function phpMyEditPageFooter($inst) {
         echo "<br />\n";
         PrintAssociateTable($inst, $sql);
     }
-
-    $sql = "SELECT `re_name`, `re_type` FROM `reports`";
-    echo "<br />\n";
-    PrintAssociateTable($inst, $sql);
 }
 
 function PrintAssociateLine($report) {
+    if ($report) return;
     echo "<table class='pme-main'><tr class='pme-header'>\n";
     foreach($report as $key => $cell) echo "<th class='pme-header'>$key</th>";
     echo '</tr><tr>' . "\n";
@@ -112,6 +109,7 @@ function PrintAssociateLine($report) {
 
 function PrintAssociateTable($inst, $sql) {
     $rows = $inst->FetchDB($sql, 'a');
+    if (!$rows) return;
     echo "<table class='pme-main'><tr class='pme-header'>\n";
     foreach($rows[0] as $key => $cell) echo "<th class='pme-header'>$key</th>";
     echo '</tr>' . "\n";
@@ -177,6 +175,7 @@ $opts['fdd']['re_type'] = array(
 $opts['fdd']['date_debut'] = array(
          'name' => 'Date debut',
        'select' => 'T',
+      'options' => 'C',
        'maxlen' => '10',
       'default' => date('Y-m-d'),
          'sqlw' => 'IF($val_qas = "", NULL, $val_qas)'
@@ -184,6 +183,7 @@ $opts['fdd']['date_debut'] = array(
 $opts['fdd']['date_fin'] = array(
          'name' => 'Date fin',
        'select' => 'T',
+      'options' => 'C',
        'maxlen' => '10',
       'default' => date('Y-m-d'),
          'sqlw' => 'IF($val_qas = "", NULL, $val_qas)'
