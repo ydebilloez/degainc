@@ -256,9 +256,11 @@ $$
 DELIMITER ;
 
 INSERT INTO `partners`
-    (`pa_code`, `pa_name`, `pa_type`, `status_code`)
+    (`pa_code`, `pa_name`, `pa_type`, `commentaires`, `status_code`)
 VALUES
-    ('MANUFACT', 'Manufactoring (Own)', 'Usine', 'S');
+    ('MANUFACT', 'Manufactoring (Own)', 'Usine', '', 'S'),
+    ('WALKCUST', 'Walking customer', 'Client', 'Client non identifié', 'S'),
+    ('PETTYCSH', 'Immediate purchase', 'Fournisseur', '', 'S');
 
 /* table commandes */
 
