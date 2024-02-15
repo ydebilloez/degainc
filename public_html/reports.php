@@ -27,13 +27,15 @@ require_once(dirname(__FILE__).'/lib/extensions/phpMyEdit-multiquery.class.php')
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
-function phpMyEditPageHeader($inst) {
+function phpMyEditPageHeader(&$inst) {
     if (in_array($inst->{'page_type'}, array('C'))) {
         $report = $inst->QueryDB("SELECT * FROM `reports` WHERE `rowid` = " . $inst->{'rec'});
         $title = $report['re_name'];
     } else {
         $title = 'Rapports';
     }
+
+    $inst->{'labels'}['Apply'] = 'Mettre à jour le rapport';
 
 echo '
 <script>
@@ -61,7 +63,7 @@ function phpMyEditPageFooter($inst) {
         }
         $where .= " AND `co_type` = '" . $report['re_type'] . "'";
 
-        $sql =  "SELECT `commandes`.`rowid` AS 'Commande',
+        $sql = "SELECT `commandes`.`rowid` AS 'Commande',
                 `date_commande`,
                 concat(`commandes`.`pa_code`, ' - ', `pa_name`) AS 'Partner',
                 `date_paiement` AS 'Payé le',
@@ -83,12 +85,15 @@ function phpMyEditPageFooter($inst) {
         echo "<br />\n";
         PrintAssociateTable($inst, $sql);
 
-        $sql =  "SELECT sum(`prixtotal`) AS 'Total' FROM `commandes` " . $where;
+        $sql = "SELECT sum(`prixtotal`) AS 'Total' FROM `commandes` " . $where;
 
         echo "<br />\n";
         PrintAssociateTable($inst, $sql);
-
     }
+
+    $sql = "SELECT `re_name`, `re_type` FROM `reports`";
+    echo "<br />\n";
+    PrintAssociateTable($inst, $sql);
 }
 
 function PrintAssociateLine($report) {
@@ -119,16 +124,11 @@ $opts['display']['query'] = false;
 $opts['display']['sort'] = false;
 $opts['options'] = 'CL';
 $opts['navigation'] = 'DT';
+$opts['cgi']['prefix']['sys'] = '';
+$opts['cgi']['prefix']['operation'] = '';
 
-/*
-$opts['buttons']['C']['down'] = array(
-    array( 'name' => 'save', 'value' => 'Save &amp; Back',
-        'js_validation' => true ),
-    array( 'name' => 'more', 'value' => 'Regenerate report',
-        'js_validation' => false, 'js' => 'onclick="refresh_report(this.form, event);"' ),
-    array( 'name' => 'cancel', 'value' => 'Back without saving' )
-     );
-*/
+$opts['buttons']['C']['down'] = array('more',
+    array( 'name' => 'cancel', 'value' => 'Retour vers la liste' ));
 
 // Name of field which is the unique key
 $opts['key'] = 'rowid';
@@ -150,10 +150,12 @@ $opts['fdd']['rowid'] = array(
        'maxlen' => '10'
 );
 $opts['fdd']['re_name'] = array(
-         'name' => 'Report',
+         'name' => 'Rapport',
        'select' => 'T',
-      'options' => 'LR',
-         'help' => 'The name of the report',
+      'options' => 'L',
+          'css' => array('postfix' => 'detailslink'),
+      'URLdisp' => '$value',
+          'URL' => '$page?fl=0&fm=0&sfn[0]=0&operation=Change&rec=$key',
        'maxlen' => '60'
 );
 $opts['fdd']['re_type'] = array(
@@ -180,16 +182,6 @@ $opts['fdd']['date_fin'] = array(
       'default' => date('Y-m-d'),
          'sqlw' => 'IF($val_qas = "", NULL, $val_qas)'
 );
-
-echo '
-<script>
-function refresh_report(form, event) {
-    console.log("Refresh report");
-    event.preventDefault();
-    location.reload();    
-}
-</script>
-';
 
 // Now important call to phpMyEdit
 
