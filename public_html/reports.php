@@ -1,8 +1,6 @@
 <?php
 include(dirname(__FILE__).'/phpMyEditHeader.php');
-?>
-
-<?php
+include_once(dirname(__FILE__).'/functions.inc');
 
 /*
  * IMPORTANT NOTE: This generated file contains only a subset of huge amount
@@ -57,7 +55,6 @@ function phpMyEditPageFooter($inst) {
         $report = $inst->QueryDB("SELECT * FROM `reports` WHERE `rowid` = " . $inst->{'rec'});
 
         /*
-        echo "<hr class='gradientline' data-caption='Query'>\n";
         PrintAssociateLine($report);
         */
 
@@ -78,8 +75,6 @@ function phpMyEditPageFooter($inst) {
                 `prixtotal` AS 'Total'
          FROM `commandes`, `partners` " . $where . "
             AND `commandes`.`pa_code` = `partners`.`pa_code`";
-
-        echo "<br />\n";
         PrintAssociateTable($inst, $sql);
 
         $sql = "SELECT `commande_id` AS 'Commande', 
@@ -89,38 +84,11 @@ function phpMyEditPageFooter($inst) {
                       WHERE `commande_id` IN (SELECT `commandes`.`rowid`
                       FROM `commandes` " . $where .")
                       AND `comdetails`.`pr_code` = `products`.`pr_code`";
-
-        echo "<br />\n";
         PrintAssociateTable($inst, $sql);
 
         $sql = "SELECT sum(`prixtotal`) AS 'Total' FROM `commandes` " . $where;
-
-        echo "<br />\n";
         PrintAssociateTable($inst, $sql);
     }
-}
-
-function PrintAssociateLine($report) {
-    if ($report) return;
-    echo "<table class='pme-main'><tr class='pme-header'>\n";
-    foreach($report as $key => $cell) echo "<th class='pme-header'>$key</th>";
-    echo '</tr><tr>' . "\n";
-    foreach($report as $key => $cell) echo "<td class='pme-value'>$cell</td>";
-    echo '</tr></table>' . "\n";
-}
-
-function PrintAssociateTable($inst, $sql) {
-    $rows = $inst->FetchDB($sql, 'a');
-    if (!$rows) return;
-    echo "<table class='pme-main'><tr class='pme-header'>\n";
-    foreach($rows[0] as $key => $cell) echo "<th class='pme-header'>$key</th>";
-    echo '</tr>' . "\n";
-    foreach ($rows as $row) {
-        echo "<tr class='pme-row'>";
-        foreach($row as $key => $cell) echo "<td class='pme-value'>$cell</td>";
-        echo "</tr>\n";
-    }
-    echo '</table>' . "\n";
 }
 
 $opts['tb'] = 'reports';

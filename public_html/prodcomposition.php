@@ -1,8 +1,25 @@
 <?php
 include(dirname(__FILE__).'/phpMyEditHeader.php');
-?>
+include_once(dirname(__FILE__).'/functions.inc');
 
-<?php
+function phpMyEditPageHeader($inst) {
+
+    $productID = $inst->{'fdd'}['pr_code']['default'];
+    $sql = "SELECT * FROM `products` WHERE `pr_code` = '" . $productID . "'";
+    $product = $inst->QueryDB($sql);
+    $productName = $product['pr_name'];
+
+    echo "<h3><a href='products.php?oper=Vente&PME_sys_fl=0&PME_sys_fm=0&PME_sys_sfn[0]=0&PME_sys_operation=PME_op_View&PME_sys_rec=$productID'>Produit $productID - $productName</a></h3>\n";
+}
+
+function phpMyEditPageFooter($inst) {
+    if (in_array($inst->{'page_type'}, array('L'))) {
+        $productID = $inst->{'fdd'}['pr_code']['default'];
+        $sql = "SELECT `pr_name` AS 'Produit', concat(`pr_prixunite`, '$ pour ', `pr_quantite`, ' ', `sy_value`) AS 'Prix de vente' FROM `products`, `pme_symbols` WHERE `sy_name` = 'UNITS' AND `sy_code` = `pr_unite` AND `pr_code` = '" . $productID . "'";
+        $product = $inst->QueryDB($sql);
+        PrintAssociateLine($product);
+    }
+}
 
 /*
  * IMPORTANT NOTE: This generated file contains only a subset of huge amount
@@ -23,9 +40,16 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  * This file was manually updated.
  */
 
-require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
+require_once(dirname(__FILE__).'/lib/extensions/phpMyEdit-multiquery.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
+
+// custom settings overwriting general edit defaults
+$opts['cgi']['prefix']['data'] = 'prodcomp_';
+$opts['cgi']['persist'] = array('pr_code' => $_REQUEST['pr_code']);
+
+$productID = $opts['cgi']['persist']['pr_code'];
+$opts['filters'] = "`PMEtable0`.`pr_code` = '" . $productID . "'";
 
 $opts['options'] = 'ACVDL';
 $opts['navigation'] = 'BD';
@@ -38,6 +62,7 @@ $opts['key'] = 'rowid';
 
 // Type of key field (int/real/string/date etc.)
 $opts['key_type'] = 'int';
+
 // Sorting field(s)
 $opts['sort_field'] = array('rowid');
 
@@ -56,13 +81,16 @@ $opts['fdd']['rowid'] = array(
 $opts['fdd']['pr_code'] = array(
          'name' => 'Product',
        'select' => 'T',
+      'options' => 'ACPDR',
        'maxlen' => '8',
            'js' => array('required' => true),
        'values' => array('table'  => 'products',
                          'column' => 'pr_code',
                          'description' => array('columns' => array('pr_code', 'pr_name', 'pr_unite'),
-                                                'divs'    => array (' - ', ' (', ')'))
+                                                'divs'    => array (' - ', ' (', ')')),
+                         'filters' => "`products`.`pr_code` = '" . $productID . "'"
                         ),
+      'default' => $productID,
          'sort' => true
 );
 $opts['fdd']['in_code'] = array(
@@ -83,33 +111,14 @@ $opts['fdd']['quantite'] = array(
       'default' => '1.00'
 );
 
-// possibly initialise page further before going to main function
-
-if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
-
-// now copy php variables over to js variables
-// protect sensitive variables so they cannot be read
-$cleanopts = $opts;
-unset($cleanopts['hn']); unset($cleanopts['pt']);
-unset($cleanopts['un']); unset($cleanopts['pw']);
-
 echo '
 <script>
-    var phpOpts = ' . json_encode($cleanopts) . ';
-    try {
-        if (typeof PME_js_init === \'function\') {
-            PME_js_init(phpOpts);
-        }
-    } catch(err) {
-        console.log(err);
-    }
-    PME_js_setPageTitle("Composition de produit");
+    PME_js_setPageTitle("Composition produit");
 </script>
 ';
 
 // Now important call to phpMyEdit
 
-new phpMyEdit($opts);
+new phpMyEdit_MultiQuery($opts);
 
 //eof
-

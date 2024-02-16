@@ -53,6 +53,17 @@ ALTER TABLE `ingredients`
     ADD CONSTRAINT `FK_ingredients_statuscodes`
     FOREIGN KEY (`status_code`) REFERENCES `pme_statuscodes`(`code`);
 
+INSERT INTO `ingredients`
+    (`in_code`, `in_name`, `in_unite`)
+VALUES
+    ('ETIQ', 'Etiquette', 'Pce'),
+    ('MIEL', 'Miel', 'L'),
+    ('HDP', 'Huile de palme', 'L'),
+    ('BID1L', 'Bidon 1L', 'Pce'),
+    ('BID5L', 'Bidon 5L', 'Pce'),
+    ('BRAISE', 'Braise', '$'),
+    ('CONDT', 'Travail de conditionnement', '$');
+
 /* products table */
 
 DROP TRIGGER IF EXISTS `products_before_insert`;
@@ -121,11 +132,13 @@ $$
 DELIMITER ;
 
 INSERT INTO `products`
-    (`pr_code`, `pr_name`, `pr_type`, `pr_unite`, `pr_quantite`)
+    (`pr_code`, `pr_name`, `pr_type`, `pr_unite`, `pr_quantite`, `pr_prixunite`)
 VALUES
-    ('HDP20', 'Huile de Palme Bidon 20L', 'Achat', 'L', 20),
-    ('HDP5', 'Huile de Palme Bidon 5L', 'Vente', 'L', 5),
-    ('MIEL500', 'Miel 500g', 'Vente', 'g', 500);
+    ('HDP20', 'Huile de Palme Bidon 20L', 'Achat', 'L', 20, 180),
+    ('MIEL1L', 'Miel 1 L', 'Achat', 'L', 1, 0.8),
+    ('HDP1', 'Huile de Palme Bidon 1L', 'Vente', 'L', 1, 15),
+    ('HDP5', 'Huile de Palme Bidon 5L', 'Vente', 'L', 5, 80),
+    ('MIEL500', 'Miel 500g', 'Vente', 'g', 500, 1);
 
 /* table prodcomposition */
 
@@ -170,6 +183,20 @@ END
 $$
 
 DELIMITER ;
+
+INSERT INTO `prodcomposition`
+    (`pr_code`, `in_code`, `quantite`)
+VALUES
+    ('HDP1', 'ETIQ', 1),
+    ('HDP1', 'HDP', 1),
+    ('HDP1', 'CONDT', 0.1),
+    ('HDP1', 'BRAISE', 0.05),
+    ('HDP1', 'BID1L', 1),
+    ('HDP5', 'ETIQ', 1),
+    ('HDP5', 'HDP', 5),
+    ('MIEL500', 'ETIQ', 1),
+    ('MIEL500', 'MIEL', 0.5),
+    ('MIEL500', 'CONDT', 0.15);
 
 /* table partners */
 

@@ -1,7 +1,8 @@
 <menu class='pme-menu'>
     <li><a href='/'><img class="pme-navigation" src="images/pme-home.png" alt="Home"></a></li>
     <li><a href='ingredients.php'>Ingredients</a></li>
-    <li><a href='products.php'>Produits</a></li>
+    <li><a href='products.php?oper=Achat'>Produits</a></li>
+    <li><a href='products.php?oper=Vente'>Produits de vente</a></li>
     <li><a href='partners.php'>Partenaires</a></li>
     <li><a href='clients.php'>Clients</a></li>
     <li><a href='fournisseurs.php'>Fournisseurs</a></li>

@@ -1,8 +1,17 @@
 <?php
 include(dirname(__FILE__).'/phpMyEditHeader.php');
-?>
+include_once(dirname(__FILE__).'/functions.inc');
 
-<?php
+function phpMyEditPageFooter($inst) {
+    if (in_array($inst->{'page_type'}, array('A', 'C', 'V', 'D'))) {
+        $sql = "SELECT `in_name` AS 'Ingredient',
+                        concat(`quantite`, ' ', `in_unite`) AS 'Quantité'
+        FROM `prodcomposition`, `ingredients`
+        WHERE `pr_code` = '" . $inst->{'rec'} . "'
+          AND `prodcomposition`.`in_code` = `ingredients`.`in_code`";
+        PrintAssociateTable($inst, $sql);
+    }
+}
 
 /*
  * IMPORTANT NOTE: This generated file contains only a subset of huge amount
@@ -23,9 +32,17 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
  * This file was manually updated.
  */
 
-require_once(dirname(__FILE__).'/lib/phpMyEdit.class.php');
+require_once(dirname(__FILE__).'/lib/extensions/phpMyEdit-multiquery.class.php');
 require_once(dirname(__FILE__).'/lib/phpMyEditDB.php');
 require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
+
+$opts['cgi']['persist'] = array('oper' => $_REQUEST['oper']);
+if ($opts['cgi']['persist']['oper'] == 'Vente') {
+    $title = "<a href='products.php?oper=Vente'>Produits pour la vente</a>";
+} else {
+    $title = "<a href='products.php?oper=Achat'>Produits achat stock</a>";
+}
+$opts['filters'] = "`pr_type` = '" . $opts['cgi']['persist']['oper'] . "'";
 
 // custom settings
 $opts['options'] = 'ACVD';
@@ -38,6 +55,7 @@ $opts['key'] = 'pr_code';
 
 // Type of key field (int/real/string/date etc.)
 $opts['key_type'] = 'char';
+
 // Sorting field(s)
 $opts['sort_field'] = array('pr_code');
 
@@ -62,13 +80,13 @@ $opts['fdd']['pr_name'] = array(
 $opts['fdd']['pr_type'] = array(
          'name' => 'Type',
        'select' => 'C',
+      'options' => 'VDR',
        'maxlen' => '5',
        'values' => array(
                   "Achat",
                   "Vente"),
            'js' => array('required' => true),
-      'default' => 'Achat',
-         'sort' => true
+      'default' => $opts['cgi']['persist']['oper']
 );
 $opts['fdd']['pr_unite'] = array(
          'name' => 'Unité',
@@ -89,12 +107,17 @@ $opts['fdd']['pr_quantite'] = array(
       'default' => '1.00'
 );
 $opts['fdd']['pr_prixunite'] = array(
-         'name' => 'Prix Unité',
        'select' => 'N',
        'maxlen' => '10',
       'default' => '0.00',
-         'sort' => true
+         'sort' => true,
+         'help' => '$'
 );
+if ($opts['cgi']['persist']['oper'] == 'Vente') {
+    $opts['fdd']['pr_prixunite']['name'] = 'Prix de vente';
+} else {
+    $opts['fdd']['pr_prixunite']['name'] = "Prix à l'achat";
+}
 $opts['fdd']['status_code'] = array(
          'name' => 'Status code',
        'select' => 'T',
@@ -107,29 +130,26 @@ $opts['fdd']['status_code'] = array(
                                                 'divs'    => array (' - '))
                         )
 );
-$opts['fdd']['pr_ingredients'] = array(
+if ($opts['cgi']['persist']['oper'] == 'Vente') {
+    $opts['fdd']['pr_ingredients'] = array(
          'name' => '# ingredients',
        'select' => 'T',
       'options' => 'VL',
           'css' => array('postfix' => 'detailsbutton'),
       'URLdisp' => 'Ingredient(s): $value',
-          'URL' => 'prodcomposition.php?ro=rw&pr_code=$key'
-);
-
-
-// possibly initialise page further before going to main function
-
-if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
+          'URL' => 'prodcomposition.php?pr_code=$key'
+    );
+}
 
 echo '
 <script>
-    PME_js_setPageTitle("Produits");
+    PME_js_setPageTitle("' . $title . '");
 </script>
 ';
 
 // Now important call to phpMyEdit
 
-new phpMyEdit($opts);
+new phpMyEdit_MultiQuery($opts);
 
 //eof
 
