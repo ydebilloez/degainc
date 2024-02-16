@@ -155,10 +155,6 @@ $opts['fdd']['commentaires'] = array(
      'textarea' => array('rows' => 5, 'cols' => 80)
 );
 
-// possibly initialise page further before going to main function
-
-if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
-
 echo '
 <script>
     PME_js_setPageTitle("");

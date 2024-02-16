@@ -17,10 +17,6 @@ function phpMyEditPageFooter($inst) {
     }
 }
 
-?>
-
-<?php
-
 /*
  * IMPORTANT NOTE: This generated file contains only a subset of huge amount
  * of options that can be used with phpMyEdit. To get information about all

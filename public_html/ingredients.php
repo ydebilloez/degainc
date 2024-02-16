@@ -1,8 +1,5 @@
 <?php
 include(dirname(__FILE__).'/phpMyEditHeader.php');
-?>
-
-<?php
 
 /*
  * IMPORTANT NOTE: This generated file contains only a subset of huge amount
@@ -38,6 +35,7 @@ $opts['key'] = 'in_code';
 
 // Type of key field (int/real/string/date etc.)
 $opts['key_type'] = 'char';
+
 // Sorting field(s)
 $opts['sort_field'] = array('in_code');
 
@@ -83,10 +81,6 @@ $opts['fdd']['status_code'] = array(
                                                 'divs'    => array (' - '))
                         )
 );
-
-// possibly initialise page further before going to main function
-
-if (function_exists('phpMyEditHeaderInit')) { phpMyEditHeaderInit($opts); }
 
 echo '
 <script>
