@@ -30,11 +30,11 @@ VALUES
 INSERT INTO `pme_symbols`
     (`sy_name`, `sy_code`, `sy_value`)
 VALUES
-    ('UNITS', 'Kg', 'Kilogram'),
-    ('UNITS', 'g', 'gram'),
-    ('UNITS', 'Pce', 'Pieces'),
-    ('UNITS', 'L', 'Litre'),
-    ('UNITS', 'ml', 'millilitre'),
+    ('UNITS', 'Kg', 'Kilogramme(s)'),
+    ('UNITS', 'g', 'gramme(s)'),
+    ('UNITS', 'Pce', 'pièce(s)'),
+    ('UNITS', 'L', 'litre(s)'),
+    ('UNITS', 'ml', 'millilitre(s)'),
     ('UNITS', '$', 'USD');
 
 /* ingredients table */
