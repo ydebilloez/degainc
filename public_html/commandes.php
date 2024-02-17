@@ -5,15 +5,17 @@ function phpMyEditPageFooter($inst) {
     $commande = $inst->{'rec'};
     if (in_array($inst->{'page_type'}, array('A', 'C', 'V', 'D'))) {
         $rows = $inst->FetchDB("SELECT * FROM `comdetails` WHERE `commande_id` = $commande");
-        echo "<br />\n";
-        echo "<hr class='gradientline' data-caption='Details'>\n";
-        echo "<table class='pme-main'>\n";
-        foreach ($rows as $row) {
-            echo "<tr class='pme-row'>";
-            foreach($row as $cell) echo "<td class='pme-value'>$cell</td>";
-            echo "</tr>\n";
+        if ($rows) {
+            echo "<br />\n";
+            echo "<hr class='gradientline' data-caption='Details'>\n";
+            echo "<table class='pme-main'>\n";
+            foreach ($rows as $row) {
+                echo "<tr class='pme-row'>";
+                foreach($row as $cell) echo "<td class='pme-value'>$cell</td>";
+                echo "</tr>\n";
+            }
+            echo '</table>' . "\n";
         }
-        echo '</table>' . "\n";
     }
 }
 
