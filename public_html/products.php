@@ -3,7 +3,8 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
 include_once(dirname(__FILE__).'/functions.inc');
 
 function phpMyEditPageFooter($inst) {
-    if (in_array($inst->{'page_type'}, array('A', 'C', 'V', 'D'))) {
+    if (in_array($inst->{'page_type'}, array('A', 'C', 'V', 'D'))
+        && ($inst->{'fdd'}['pr_type']['default'] == 'Vente')) {
         $sql = "SELECT `in_name` AS 'Ingredient',
                         concat(`quantite`, ' ', `in_unite`) AS 'Quantité',
                         FORMAT(quantite * in_prixunite,2) AS 'Coût'
