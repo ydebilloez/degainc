@@ -69,6 +69,13 @@ $opts['fdd']['in_unite'] = array(
                          'filters' => 'sy_name = "UNITS"'
                         )
 );
+$opts['fdd']['in_prixunite'] = array(
+         'name' => "Coût par Unité",
+       'select' => 'N',
+       'maxlen' => '10',
+      'default' => '1.00',
+         'help' => '$'
+);
 $opts['fdd']['status_code'] = array(
          'name' => 'Status code',
        'select' => 'T',

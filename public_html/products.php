@@ -5,7 +5,15 @@ include_once(dirname(__FILE__).'/functions.inc');
 function phpMyEditPageFooter($inst) {
     if (in_array($inst->{'page_type'}, array('A', 'C', 'V', 'D'))) {
         $sql = "SELECT `in_name` AS 'Ingredient',
-                        concat(`quantite`, ' ', `in_unite`) AS 'Quantité'
+                        concat(`quantite`, ' ', `in_unite`) AS 'Quantité',
+                        FORMAT(quantite * in_prixunite,2) AS 'Coût'
+        FROM `prodcomposition`, `ingredients`
+        WHERE `pr_code` = '" . $inst->{'rec'} . "'
+          AND `prodcomposition`.`in_code` = `ingredients`.`in_code`
+        UNION
+        SELECT '<strong>Total</strong>' AS 'Ingredient',
+               '' AS 'Quantité',
+               FORMAT(SUM(quantite * in_prixunite),2) AS 'Coût'
         FROM `prodcomposition`, `ingredients`
         WHERE `pr_code` = '" . $inst->{'rec'} . "'
           AND `prodcomposition`.`in_code` = `ingredients`.`in_code`";
@@ -38,9 +46,11 @@ require_once(dirname(__FILE__).'/phpMyEditDefaults.php');
 
 $opts['cgi']['persist'] = array('oper' => $_REQUEST['oper']);
 if ($opts['cgi']['persist']['oper'] == 'Vente') {
-    $title = "<a href='products.php?oper=Vente'>Produits pour la vente</a>";
+    $title = "Produits pour la vente";
+    $titleLink = 'products.php?oper=Vente';
 } else {
-    $title = "<a href='products.php?oper=Achat'>Produits achat stock</a>";
+    $title = "Produits achat stock";
+    $titleLink = 'products.php?oper=Achat';
 }
 $opts['filters'] = "`pr_type` = '" . $opts['cgi']['persist']['oper'] . "'";
 
@@ -143,7 +153,7 @@ if ($opts['cgi']['persist']['oper'] == 'Vente') {
 
 echo '
 <script>
-    PME_js_setPageTitle("' . $title . '");
+    PME_js_setPageTitle("' . $title . '", "' . $titleLink . '");
 </script>
 ';
 

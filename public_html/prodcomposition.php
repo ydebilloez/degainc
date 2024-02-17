@@ -52,7 +52,7 @@ $productID = $opts['cgi']['persist']['pr_code'];
 $opts['filters'] = "`PMEtable0`.`pr_code` = '" . $productID . "'";
 
 $opts['options'] = 'ACVDL';
-$opts['navigation'] = 'BD';
+$opts['navigation'] = 'GD';
 $opts['display']['sort'] = false;
 
 $opts['tb'] = 'prodcomposition';
@@ -90,8 +90,7 @@ $opts['fdd']['pr_code'] = array(
                                                 'divs'    => array (' - ', ' (', ')')),
                          'filters' => "`products`.`pr_code` = '" . $productID . "'"
                         ),
-      'default' => $productID,
-         'sort' => true
+      'default' => $productID
 );
 $opts['fdd']['in_code'] = array(
          'name' => 'Ingredient',

@@ -53,12 +53,11 @@ echo '
 function phpMyEditPageFooter($inst) {
     if (in_array($inst->{'page_type'}, array('C'))) {        
         $report = $inst->QueryDB("SELECT * FROM `reports` WHERE `rowid` = " . $inst->{'rec'});
+        $type = $report['re_type'];
 
-        /*
-        PrintAssociateLine($report);
-        */
+        //PrintAssociateLine($report);
 
-        echo "<hr class='gradientline' data-caption='Rapport'>\n";
+        echo "<hr class='gradientline' data-caption='Rapport " . $type . "'>\n";
 
         $where =  " WHERE `date_commande` >= str_to_date('" .
                 $report['date_debut'] . "','%Y-%m-%d')";
@@ -66,28 +65,59 @@ function phpMyEditPageFooter($inst) {
             $where .= " AND `date_commande` <= str_to_date('" .
                 $report['date_fin'] . "','%Y-%m-%d')";
         }
-        $where .= " AND `co_type` = '" . $report['re_type'] . "'";
+        $where .= " AND `co_type` = '" . $type . "'";
 
         $sql = "SELECT `commandes`.`rowid` AS 'Commande',
                 `date_commande`,
                 concat(`commandes`.`pa_code`, ' - ', `pa_name`) AS 'Partner',
                 `date_paiement` AS 'Payé le',
-                `prixtotal` AS 'Total'
+                FORMAT(`prixtotal`,2) AS 'Total'
          FROM `commandes`, `partners` " . $where . "
             AND `commandes`.`pa_code` = `partners`.`pa_code`";
         PrintAssociateTable($inst, $sql);
 
         $sql = "SELECT `commande_id` AS 'Commande', 
-                        concat(`comdetails`.`pr_code`, ' - ' , `pr_name`) AS 'Product',
-                        concat(`quantite`, ' ', `pr_unite`) AS 'Volume'
+                        concat(`comdetails`.`pr_code`, ' - ' , `pr_name`) AS 'Produit',
+                        `quantite` AS 'Qté',
+                        `pr_unite` AS 'Unité'
                 FROM `comdetails`, `products`
                       WHERE `commande_id` IN (SELECT `commandes`.`rowid`
                       FROM `commandes` " . $where .")
                       AND `comdetails`.`pr_code` = `products`.`pr_code`";
         PrintAssociateTable($inst, $sql);
 
-        $sql = "SELECT sum(`prixtotal`) AS 'Total' FROM `commandes` " . $where;
-        PrintAssociateTable($inst, $sql);
+        if ($type != 'Fabrication') {
+            $sql = "SELECT FORMAT(sum(`prixtotal`),2) AS 'Total' FROM `commandes` " . $where;
+            PrintAssociateTable($inst, $sql);
+        }
+
+        if ($type == 'Vente') {
+            echo "<hr class='gradientline' data-caption='Coût de production'>\n";
+            $sql = "
+
+SELECT `ig`.`in_name` AS 'Ingrédient',
+        FORMAT(SUM(`cd`.`quantite` * `pc`.`quantite`),2) as 'Volume',
+        `ig`.`in_prixunite` AS 'Prix/unité',
+        FORMAT(SUM(`cd`.`quantite` * `pc`.`quantite`) * `ig`.`in_prixunite`,2) AS 'Coût'
+FROM `comdetails` cd, `prodcomposition` pc, `ingredients` ig
+WHERE `commande_id` IN (SELECT `commandes`.`rowid` FROM `commandes` " . $where .")
+    AND `cd`.`pr_code` = `pc`.`pr_code`
+    AND `pc`.`in_code` = `ig`.`in_code`
+GROUP BY `ig`.`in_code`
+
+UNION
+
+SELECT  '<strong>Total</strong>' AS 'Ingrédient',
+        '' as 'Volume',
+        '' AS 'Prix/unité',
+        FORMAT(SUM(`cd`.`quantite` * `pc`.`quantite` * `ig`.`in_prixunite`),2) AS 'Coût'
+FROM `comdetails` cd, `prodcomposition` pc, `ingredients` ig
+WHERE `commande_id` IN (SELECT `commandes`.`rowid` FROM `commandes` " . $where .")
+    AND `cd`.`pr_code` = `pc`.`pr_code`
+    AND `pc`.`in_code` = `ig`.`in_code`";
+
+            PrintAssociateTable($inst, $sql);
+        }
     }
 }
 

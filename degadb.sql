@@ -40,9 +40,10 @@ VALUES
 /* ingredients table */
 
 CREATE TABLE `ingredients` (
-    `in_code` CHAR(8) NOT NULL COMMENT 'the ingredient code, uppercase',
-    `in_name` VARCHAR(60) NOT NULL COMMENT 'the ingredient code',
-    `in_unite` CHAR(10) NOT NULL DEFAULT '',
+    `in_code` CHAR(8) NOT NULL COMMENT 'code, en majuscules',
+    `in_name` VARCHAR(60) NOT NULL COMMENT "le nom de l'ingrédient",
+    `in_unite` CHAR(10) NOT NULL DEFAULT 'Pce',
+    `in_prixunite` DECIMAL(10,2) DEFAULT 0.0 COMMENT 'prix unité',
     `status_code` CHAR(1) DEFAULT 'C' COMMENT 'valid codes: see table pme_statuscodes'
 );
 
@@ -54,15 +55,15 @@ ALTER TABLE `ingredients`
     FOREIGN KEY (`status_code`) REFERENCES `pme_statuscodes`(`code`);
 
 INSERT INTO `ingredients`
-    (`in_code`, `in_name`, `in_unite`)
+    (`in_code`, `in_name`, `in_unite`, `in_prixunite`)
 VALUES
-    ('ETIQ', 'Etiquette', 'Pce'),
-    ('MIEL', 'Miel', 'L'),
-    ('HDP', 'Huile de palme', 'L'),
-    ('BID1L', 'Bidon 1L', 'Pce'),
-    ('BID5L', 'Bidon 5L', 'Pce'),
-    ('BRAISE', 'Braise', '$'),
-    ('CONDT', 'Travail de conditionnement', '$');
+    ('ETIQ', 'Etiquette', 'Pce', 0.20),
+    ('MIEL', 'Miel', 'L', 10),
+    ('HDP', 'Huile de palme', 'L', 9),
+    ('BID1L', 'Bidon 1L', 'Pce', 1),
+    ('BID5L', 'Bidon 5L', 'Pce', 2.5),
+    ('BRAISE', 'Braise', '$', 1),
+    ('CONDT', 'Travail de conditionnement', '$', 1);
 
 /* products table */
 
