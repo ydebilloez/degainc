@@ -40,17 +40,20 @@ function retrieveMyEditVersion() {
 ?>
 <body class='pme-main'>
     <h1>Dega Inc.</h1>
-    <p>Multi functional, intelligent data system. Based on version <span id='PME-version'>
-        <?php echo retrieveMyEditVersion(); ?></span> of phpMyEdit.</p>
-    <hr class='gradientline' data-caption='Manage data' />
-    <p>Start by setting up your data, reports will be generated based on available data.</p>
+    <hr class='gradientline' data-caption='Agent vendeur' />
+    <?php include(dirname(__FILE__).'/menu-seller.inc'); ?>
+    <hr class='gradientline' data-caption='Functions utilisateur' />
+    <?php include(dirname(__FILE__).'/menu-user.inc'); ?>
+    <hr class='gradientline' data-caption='Gestion système' />
     <?php include(dirname(__FILE__).'/menu.inc'); ?>
     <hr class='gradientline' data-caption='Additional functions' />
+    <p>Multi functional, intelligent data system. Based on version <span id='PME-version'>
+        <?php echo retrieveMyEditVersion(); ?></span> of phpMyEdit.</p>
+    <p>Start by setting up your data, reports will be generated based on available data.</p>
     <menu class='pme-menu'>
         <li />
         <li><a href='examples/getstarted-index.php'>System configuration</a></li>
         <li />
-        <li>Reports... to be continued</li>
     </menu>
 </body>
 </html>
