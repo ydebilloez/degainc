@@ -55,6 +55,12 @@ function phpMyEditPageFooter($inst) {
         $report = $inst->QueryDB("SELECT * FROM `reports` WHERE `rowid` = " . $inst->{'rec'});
         $type = $report['re_type'];
 
+        if ($type == 'Fabrication') {
+            $commandeTitle = 'Batch';
+        } else {
+            $commandeTitle = 'Commande';
+        }
+
         //PrintAssociateLine($report);
 
         echo "<hr class='gradientline' data-caption='Rapport " . $type . "'>\n";
@@ -67,7 +73,7 @@ function phpMyEditPageFooter($inst) {
         }
         $where .= " AND `co_type` = '" . $type . "'";
 
-        $sql = "SELECT `commandes`.`rowid` AS 'Commande',
+        $sql = "SELECT `commandes`.`rowid` AS '" . $commandeTitle . "',
                 `date_commande`,
                 concat(`commandes`.`pa_code`, ' - ', `pa_name`) AS 'Partner',
                 `date_paiement` AS 'Payé le',
@@ -76,7 +82,7 @@ function phpMyEditPageFooter($inst) {
             AND `commandes`.`pa_code` = `partners`.`pa_code`";
         PrintAssociateTable($inst, $sql);
 
-        $sql = "SELECT `commande_id` AS 'Commande', 
+        $sql = "SELECT `commande_id` AS '" . $commandeTitle . "', 
                         concat(`comdetails`.`pr_code`, ' - ' , `pr_name`) AS 'Produit',
                         `quantite` AS 'Qté',
                         `pr_unite` AS 'Unité'

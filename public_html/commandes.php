@@ -4,11 +4,20 @@ include(dirname(__FILE__).'/phpMyEditHeader.php');
 function phpMyEditPageFooter($inst) {
     $commande = $inst->{'rec'};
     if (in_array($inst->{'page_type'}, array('A', 'C', 'V', 'D'))) {
-        $rows = $inst->FetchDB("SELECT * FROM `comdetails` WHERE `commande_id` = $commande");
+        $sql = "
+SELECT concat(`comdetails`.`pr_code`, ' - ', `products`.`pr_name`) AS 'Produit',
+        `quantite` AS 'Qte',
+        `commentaires` AS 'Commentaires'
+FROM `comdetails`, `products`
+WHERE `products`.`pr_code` = `comdetails`.`pr_code`
+  AND `commande_id` = $commande";
+        $rows = $inst->FetchDB($sql, 'a');
         if ($rows) {
             echo "<br />\n";
             echo "<hr class='gradientline' data-caption='Details'>\n";
-            echo "<table class='pme-main'>\n";
+            echo "<table class='pme-main'><tr class='pme-header'>\n";
+            foreach($rows[0] as $key => $cell) echo "<th class='pme-header'>$key</th>";
+            echo '</tr>' . "\n";
             foreach ($rows as $row) {
                 echo "<tr class='pme-row'>";
                 foreach($row as $cell) echo "<td class='pme-value'>$cell</td>";
@@ -178,6 +187,9 @@ $opts['fdd']['articles'] = array(
       'URLdisp' => $oper . ' $value article(s)',
           'URL' => 'comdetails.php?oper=' . $opts['cgi']['persist']['oper'] . '&commande_id=$key'
 );
+if ($oper == 'View') {
+    $opts['fdd']['articles']['options'] = 'L';
+}
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
