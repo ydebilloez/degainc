@@ -1,8 +1,5 @@
 <?php
 include(dirname(__FILE__).'/phpMyEditHeader.php');
-?>
-
-<?php
 
 /*
  * IMPORTANT NOTE: This generated file contains only a subset of huge amount
@@ -35,10 +32,6 @@ $opts['key'] = 'an_code';
 // Type of key field (int/real/string/date etc.)
 // Sorting field(s)
 $opts['sort_field'] = array('an_code');
-
-/* please refer to lib/phpMyEditInfo.php for additional options
-   that can be added in this file
-*/
 
 $opts['fdd']['an_code'] = array(
          'name' => 'Code',

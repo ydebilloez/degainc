@@ -33,7 +33,7 @@ WHERE `products`.`pr_code` = `comdetails`.`pr_code`
  * of options that can be used with phpMyEdit. To get information about all
  * features offered by phpMyEdit, please check the documentation. It is available
  * on the phpMyEdit pages or in the manuals folder. Some information can also be
- * found in the lib/configoptions.md file.
+ * found in the examples/configoptions.md file.
  *
  * https://sourceforge.net/projects/phpmariaedit/
  *
@@ -108,10 +108,6 @@ $opts['key'] = 'rowid';
 
 // Type of key field (int/real/string/date etc.)
 $opts['key_type'] = 'int';
-
-/* please refer to lib/phpMyEditInfo.php for additional options
-   that can be added in this file
-*/
 
 $opts['fdd']['co_type'] = array(
          'name' => 'Type',

@@ -25,7 +25,7 @@ Payé le : {$row['date_paiement']}
     if (defined('DEBUG')) {
         echo '<pre>' . "\n";
         echo 'Inside obj: ' . print_r($inst, true);
-        echo '</pre>' . "\n";            
+        echo '</pre>' . "\n";
     }
 */
 }
@@ -47,16 +47,12 @@ function phpMyEditPageFooter($inst) {
     }
 }
 
-?>
-
-<?php
-
 /*
  * IMPORTANT NOTE: This generated file contains only a subset of huge amount
  * of options that can be used with phpMyEdit. To get information about all
  * features offered by phpMyEdit, please check the documentation. It is available
  * on the phpMyEdit pages or in the manuals folder. Some information can also be
- * found in the lib/configoptions.md file.
+ * found in the examples/configoptions.md file.
  *
  * https://sourceforge.net/projects/phpmariaedit/
  *
@@ -100,10 +96,6 @@ $opts['key'] = 'rowid';
 $opts['key_type'] = 'int';
 // Sorting field(s)
 $opts['sort_field'] = array('rowid');
-
-/* please refer to lib/phpMyEditInfo.php for additional options
-   that can be added in this file
-*/
 
 $opts['fdd']['rowid'] = array(
          'name' => 'ID',

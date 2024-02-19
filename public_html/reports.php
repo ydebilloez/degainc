@@ -149,10 +149,6 @@ $opts['key_type'] = 'int';
 // Sorting field(s)
 $opts['sort_field'] = array('rowid');
 
-/* please refer to lib/phpMyEditInfo.php for additional options
-   that can be added in this file
-*/
-
 $opts['fdd']['rowid'] = array(
          'name' => 'ID',
        'select' => 'T',
