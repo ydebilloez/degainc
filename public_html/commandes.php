@@ -190,6 +190,14 @@ $opts['fdd']['articles'] = array(
 if ($oper == 'View') {
     $opts['fdd']['articles']['options'] = 'L';
 }
+if ($opts['cgi']['persist']['oper'] != 'Fabrication') {
+    $opts['fdd']['prixtotal'] = array(
+             'name' => 'Prix total',
+           'select' => 'T',
+          'options' => 'VDLR',
+             'sort' => true
+    );
+}
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
