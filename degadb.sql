@@ -424,7 +424,13 @@ $$
 
 DELIMITER ;
 
-/* table achats */
+/* table operations */
+
+DROP TRIGGER IF EXISTS `operations_after_insert`;
+DROP TRIGGER IF EXISTS `operations_after_update`;
+DROP TRIGGER IF EXISTS `operations_after_delete`;
+
+DROP TABLE IF EXISTS `operations`;
 
 CREATE TABLE `operations` (
     `commande_id` INT(10),
@@ -442,6 +448,35 @@ ALTER TABLE `operations`
 ALTER TABLE `operations`
     ADD CONSTRAINT `FK_operations_commande_id`
     FOREIGN KEY (`commande_id`) REFERENCES `commandes`(`rowid`);
+
+DELIMITER $$
+
+CREATE TRIGGER `operations_after_insert`
+    AFTER INSERT ON `operations` FOR EACH ROW
+BEGIN
+    UPDATE `commandes` SET `date_paiement` = NEW.`date_operation`
+        WHERE `commandes`.`rowid` = NEW.`commande_id`;
+END
+$$
+
+CREATE TRIGGER `operations_after_update`
+    AFTER UPDATE ON `operations` FOR EACH ROW
+BEGIN
+    UPDATE `commandes` SET `date_paiement` = NEW.`date_operation`
+        WHERE `commandes`.`rowid` = NEW.`commande_id`;
+END
+$$
+
+CREATE TRIGGER `operations_after_delete`
+    AFTER DELETE ON `operations` FOR EACH ROW
+BEGIN
+    UPDATE `commandes` SET `date_paiement` = NULL
+        WHERE `commandes`.`rowid` = OLD.`commande_id`;
+
+END
+$$
+
+DELIMITER ;
 
 /* reports table */
 

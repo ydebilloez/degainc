@@ -2,12 +2,47 @@
 include(dirname(__FILE__).'/phpMyEditHeader.php');
 
 function phpMyEditPageHeader($inst) {
-    if (in_array($inst->{'page_type'}, array('C'))) {
+    if (in_array($inst->{'page_type'}, array('C', 'V', 'D'))) {
+        $sql = "SELECT `date_operation` FROM `operations` WHERE `rowid` = " . (string) $inst->{'rec'};
+        $row = $inst->QueryDB($sql);
+        $transDate = date_create($row['date_operation']);
+    }
+    if ($inst->{'page_type'} == 'C') {
+        // do not allow to delete transactions which are older than today
+        if ($transDate < date_create("today")) {
+            $inst->{'fdd'}['commentaires']['options'] = 'ACVDFR';
+            $inst->{'buttons'}['C']['down'] = array(array('name' => 'cancel',
+                                                          'value' => 'Ne sera pas modifié'));
+        }
         // only allow comments to be modified
         $inst->{'fdd'}['commande_id']['options'] = 'ACVDFR';
         $inst->{'fdd'}['value_operation']['options'] = 'ACVDFR';
         $inst->{'fdd'}['date_operation']['options'] = 'ACVDFR';
         $inst->recreate_displayed();
+    } else if ($inst->{'page_type'} == 'V') {
+        // disable modifify button
+        if ($transDate < date_create("today")) {
+            $inst->{'buttons'}['V']['down'] = array('cancel');
+        }
+    } else if ($inst->{'page_type'} == 'A') {
+        // do only list unpaid orders
+        $inst->{'fdd'}['commande_id']['values']['filters'] .= " AND `date_paiement` IS NULL";
+        $inst->recreate_displayed();
+    } else if ($inst->{'page_type'} == 'D') {
+        // do not allow to delete transactions which are older than today
+        if ($transDate < date_create("today")) {
+            $inst->{'buttons'}['D']['down'] = array(array('name' => 'cancel',
+                                                          'value' => 'Ne peut pas etre effacé'));
+        }
+    }
+
+    if ($inst->{'page_type'} == 'L') {
+        $sql = "SELECT count(`rowid`) AS 'Cnt' FROM `commandes` WHERE `date_paiement` IS NULL
+                AND " . $inst->{'fdd'}['commande_id']['values']['filters'];
+        $row = $inst->QueryDB($sql);
+        if ($row['Cnt'] == '0') {
+            $inst->{'buttons'}['L']['down'] = array(array('name' => 'cancel', 'value' => 'Pas de transactions ouvertes'));
+        }
     }
 }
 
@@ -27,7 +62,7 @@ function phpMyEditPageHeader($inst) {
  *            phpMyEditSetup.php script: 5.7.6
  *                     generated script: 5.7.6
  *
- * This file was NOT manually updated.
+ * This file was manually updated.
  */
 
 require_once(dirname(__FILE__).'/lib/extensions/phpMyEdit-multiquery.class.php');
@@ -39,20 +74,21 @@ $opts['tb'] = 'operations';
 // custom settings overwriting general edit defaults
 $opts['cgi']['prefix']['data'] = 'operations_';
 $opts['cgi']['persist'] = array('oper' => $_REQUEST['oper']);
+if (empty($opts['cgi']['persist']['oper'])) $opts['cgi']['persist']['oper'] = 'Vente';
 $operation = $opts['cgi']['persist']['oper'];
 $opts['options'] = 'ACVDF';
 
 if ($operation == 'Vente') {
-    $opts['filters'] = "`commande_id` in (select `commandes`.`rowid` from `commandes` where `commandes`.`co_type` = 'Vente')"; //AND `date_paiement` IS NULL
+    $opts['filters'] = "`commande_id` in (SELECT `commandes`.`rowid` FROM `commandes` WHERE `commandes`.`co_type` = 'Vente')";
     $filter = "`co_type` = 'Vente'";
     $transTitle = 'Paiement reçu';
-    $title = 'Paiment par client';
+    $title = 'Paiments par client';
 } else {
     // operation = Livraison
-    $opts['filters'] = "`commande_id` in (select `commandes`.`rowid` from `commandes` where `commandes`.`co_type` = 'Achat')"; //AND `date_paiement` IS NULL
+    $opts['filters'] = "`commande_id` in (SELECT `commandes`.`rowid` FROM `commandes` WHERE `commandes`.`co_type` = 'Achat')";
     $filter = "`co_type` = 'Achat'";
     $transTitle = 'Paiement effectué';
-    $title = 'Reglement fournisseur';
+    $title = 'Reglements fournisseur';
 }
 
 // Name of field which is the unique key
@@ -90,7 +126,8 @@ $opts['fdd']['value_operation'] = array(
        'maxlen' => '10',
       'default' => '',
            'js' => array('required' => true),
-         'help' => '$'
+         'help' => '$',
+         'sort' => true
 );
 $opts['fdd']['date_operation'] = array(
          'name' => 'Date paiement',
@@ -103,7 +140,8 @@ $opts['fdd']['date_operation'] = array(
 $opts['fdd']['commentaires'] = array(
          'name' => 'Commentaires',
        'select' => 'T',
-       'maxlen' => '255'
+       'maxlen' => '255',
+         'sort' => true
 );
 
 echo '

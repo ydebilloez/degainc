@@ -1,5 +1,6 @@
 <?php
 include(dirname(__FILE__).'/phpMyEditHeader.php');
+include_once(dirname(__FILE__).'/functions.inc');
 
 function phpMyEditPageFooter($inst) {
     $commande = $inst->{'rec'};
@@ -24,6 +25,17 @@ WHERE `products`.`pr_code` = `comdetails`.`pr_code`
                 echo "</tr>\n";
             }
             echo '</table>' . "\n";
+        }
+
+        $sql = "SELECT `date_paiement`, `co_type` FROM `commandes` WHERE `rowid` = " . $commande;
+        $row = $inst->QueryDB($sql);
+        if ($row && ($row['co_type']) != 'Fabrication') {
+            $sql = "SELECT `date_operation` AS 'Date paiement',
+                           `value_operation` AS 'Montant paiement',
+                           `commentaires` AS 'Commentaires'
+                    FROM `operations` WHERE `commande_id` = " . $commande;
+            $payment = $inst->QueryDB($sql);
+            PrintAssociateLine($payment);
         }
     }
 }
