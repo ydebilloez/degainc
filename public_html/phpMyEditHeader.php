@@ -19,7 +19,13 @@ menu.pme-menu li:not(:last-child) {
 </head>
 <body class='pme-main'>
 
-<?php include(dirname(__FILE__).'/menu-seller.inc'); ?>
+<?php
+include(dirname(__FILE__).'/menu-seller.inc');
+$menutype = $_REQUEST['menu'];
+if (isset($menutype)) {
+    include(dirname(__FILE__).'/menu-'.$menutype.'.inc');
+}
+?>
 
 <h3 id='PME-pagetitle'>PME Header - Table name</h3>
 

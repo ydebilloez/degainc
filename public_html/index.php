@@ -45,7 +45,7 @@ function retrieveMyEditVersion() {
     <hr class='gradientline' data-caption='Functions utilisateur' />
     <?php include(dirname(__FILE__).'/menu-user.inc'); ?>
     <hr class='gradientline' data-caption='Gestion système' />
-    <?php include(dirname(__FILE__).'/menu.inc'); ?>
+    <?php include(dirname(__FILE__).'/menu-admin.inc'); ?>
     <hr class='gradientline' data-caption='Additional functions' />
     <p>Multi functional, intelligent data system. Based on version <span id='PME-version'>
         <?php echo retrieveMyEditVersion(); ?></span> of phpMyEdit.</p>
