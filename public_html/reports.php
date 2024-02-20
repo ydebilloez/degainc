@@ -73,13 +73,21 @@ function phpMyEditPageFooter($inst) {
         }
         $where .= " AND `co_type` = '" . $type . "'";
 
-        $sql = "SELECT `commandes`.`rowid` AS '" . $commandeTitle . "',
-                `date_commande`,
-                concat(`commandes`.`pa_code`, ' - ', `pa_name`) AS 'Partner',
-                `date_paiement` AS 'Payé le',
-                FORMAT(`prixtotal`,2) AS 'Total'
-         FROM `commandes`, `partners` " . $where . "
-            AND `commandes`.`pa_code` = `partners`.`pa_code`";
+        if ($type == 'Fabrication') {
+            $sql = "SELECT `commandes`.`rowid` AS '" . $commandeTitle . "',
+                    `date_commande`,
+                    concat(`commandes`.`pa_code`, ' - ', `pa_name`) AS 'Usine'
+             FROM `commandes`, `partners` " . $where . "
+                AND `commandes`.`pa_code` = `partners`.`pa_code`";
+        } else {
+            $sql = "SELECT `commandes`.`rowid` AS '" . $commandeTitle . "',
+                    `date_commande`,
+                    concat(`commandes`.`pa_code`, ' - ', `pa_name`) AS 'Partner',
+                    `date_paiement` AS 'Payé le',
+                    FORMAT(`prixtotal`,2) AS 'Total'
+             FROM `commandes`, `partners` " . $where . "
+                AND `commandes`.`pa_code` = `partners`.`pa_code`";
+        }
         PrintAssociateTable($inst, $sql);
 
         $sql = "SELECT `commande_id` AS '" . $commandeTitle . "', 
