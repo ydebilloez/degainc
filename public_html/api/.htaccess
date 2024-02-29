@@ -1,0 +1,6 @@
+order allow,deny
+allow from all
+
+<FilesMatch ".+\.(php|inc)$">
+    allow from all
+</FilesMatch>

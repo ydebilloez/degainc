@@ -47,6 +47,14 @@ function phpMyEditPageHeader($inst) {
 }
 
 /*
+function phpMyEditPageFooter($inst) {
+    echo '<pre>' . "\n";
+    echo 'Inside obj: ' . print_r($inst, true);
+    echo '</pre>' . "\n";    
+}
+*/
+
+/*
  * IMPORTANT NOTE: This generated file contains only a subset of huge amount
  * of options that can be used with phpMyEdit. To get information about all
  * features offered by phpMyEdit, please check the documentation. It is available

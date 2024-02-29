@@ -1,5 +1,4 @@
 <menu class='pme-menu'>
-    <li></li>
     <li><a href='fournisseurs.php?menu=user'>Fournisseurs</a></li>
     <li><a href='commandes.php?menu=user&oper=Achat&status=Open'>Achats</a></li>
     <li><a href='commandes.php?menu=user&oper=List&status=Closed'>Anciennes-commandes</a></li>

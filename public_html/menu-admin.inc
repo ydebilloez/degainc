@@ -1,5 +1,4 @@
 <menu class='pme-menu'>
-    <li></li>
     <li><a href='ingredients.php?menu=admin'>Ingredients</a></li>
     <li><a href='products.php?menu=admin&oper=Achat'>Produits</a></li>
     <li><a href='products.php?menu=admin&oper=Vente'>Produits de vente</a></li>
