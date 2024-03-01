@@ -44,4 +44,6 @@ $opts['cgi']['prefix']['data']      = 'PME_data_';
    for list of available languages. */
 $opts['language'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 
-$opts['logtable'] = 'changelog';
+$opts['logtable'] = 'pme_changelog';
+
+// eof
