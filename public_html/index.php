@@ -146,6 +146,9 @@ function Login(fo, ev) {
 }
 function Disconnect(fo, ev) {
     ev.preventDefault();
+    // clear cookie client side as location reload will resubmit existing cookie
+    let domain = location.host; // make sure to remove column if domain is using port
+    document.cookie = 'pme_login_key=; Max-Age=0; path=/; SameSite=Strict; expires=Thu, 01 Jan 1970 00:00:01 GMT; domain=' + domain.split(':').shift();
     return pushFormToAPI(fo, '/api/login-logout.php', 'GET', CaptureAPIResult, CaptureError);
 }
 function Logout(fo, ev) {

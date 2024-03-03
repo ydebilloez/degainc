@@ -35,7 +35,7 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 // END DEBUG
 
 if (isset($data->pme_user) && isset($data->pme_password)) {
-    $data->session_token = md5($data->pme_user + $data->pme_password);
+    $data->session_token = md5($data->pme_user . $data->pme_password);
     sessionCtl_storelogin($data->session_token);
 } else if (isset($data->action) && $data->action == 'logout') {
     sessionCtl_clearlogin();
